@@ -1,0 +1,249 @@
+import React from "react";
+
+export default function HomePage() {
+  return (
+    <div className="bg-light">
+      {/* Hero Section with Background Pattern */}
+      <div className="position-relative overflow-hidden bg-primary bg-gradient text-white" 
+           style={{
+             backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"100\" height=\"100\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z\" fill=\"%23ffffff\" fill-opacity=\"0.1\" fill-rule=\"evenodd\"/%3E%3C/svg%3E')",
+           }}>
+        {/* Navbar */}
+        <nav className="navbar navbar-expand-lg navbar-dark">
+          <div className="container">
+            <a className="navbar-brand d-flex align-items-center" href="#">
+              <i className="bi bi-shield-lock fs-3 me-2"></i>
+              <span className="fw-bold">Cyber<span className="fw-light">Insights</span></span>
+            </a>
+            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarNav">
+              <ul className="navbar-nav ms-auto me-4">
+                <li className="nav-item">
+                  <a className="nav-link active" href="#">Home</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#">About Us</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#">Playground</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#">Sign In</a>
+                </li>
+              </ul>
+              <button className="btn btn-light rounded-pill px-4">Get Started</button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Hero Content */}
+        <div className="container py-5">
+          <div className="row align-items-center py-5">
+            <div className="col-lg-6 mb-5 mb-lg-0">
+              <h1 className="display-3 fw-bold mb-3">Cybersecurity Through Stories</h1>
+              <p className="lead fs-4 mb-4">Immersive narratives and hands-on simulations that make security concepts stick</p>
+              <div className="d-flex gap-3">
+                <button className="btn btn-light btn-lg rounded-pill px-4">Start reading</button>
+              </div>
+            </div>
+            <div className="col-lg-6 text-center">
+              <div className="position-relative">
+                <div className="position-absolute top-50 start-50 translate-middle" style={{ zIndex: 1 }}>
+                  <div className="spinner-grow text-light" style={{ width: "4rem", height: "4rem" }}></div>
+                </div>
+                <div style={{ 
+                  width: "400px", 
+                  height: "400px", 
+                  background: "#000",
+                  borderRadius: "20px", 
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  margin: "0 auto",
+                  boxShadow: "0 0 80px rgba(0,0,0,0.15)"
+                }}>
+                  {/* Terminal-like container */}
+                  <div className="text-start p-4 h-100 d-flex flex-column" /*style={{backgroundColor: "black"}}*/>
+                    <div className="d-flex gap-2 mb-3">
+                      <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#ff5f57" }}></div>
+                      <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#febc2e" }}></div>
+                      <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#28c840" }}></div>
+                    </div>
+                    <div className="flex-grow-1" style={{ fontFamily: "monospace", fontSize: "14px" }}>
+                      <p className="mb-1 text-success">$ initiating security scan...</p>
+                      <p className="mb-1">$ scanning network <span className="text-warning">██████████</span> 50%</p>
+                      <p className="mb-1 text-danger">$ potential vulnerability detected!</p>
+                      <p className="mb-1">$ analyzing threat vector...</p>
+                      <p className="mb-0 blinking-cursor">$ _</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Wave Separator */}
+        <div className="position-absolute bottom-0 start-0 w-100 overflow-hidden" style={{ lineHeight: 0, transform: "rotate(180deg)" }}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" style={{ position: "relative", display: "block", width: "calc(100% + 1.3px)", height: "50px" }}>
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="#f8f9fa"></path>
+          </svg>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container py-5">
+        {/* Featured Stories with Cards */}
+        <section className="mb-5">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h2 className="fs-4 fw-bold">FEATURED STORIES</h2>
+            <a href="#" className="text-primary text-decoration-none">View all</a>
+          </div>
+          
+          <div className="row g-4">
+            {[
+              { 
+                title: "How I Cracked My Friend's Secret Code", 
+                concept: "Symmetric Encryption",
+                excerpt: "What started as a friendly challenge turned into a deep dive into the world of encryption algorithms and their vulnerabilities.",
+                readTime: "8 min read",
+                date: "May 10",
+                imageUrl: "https://via.placeholder.com/600x400/3b82f6/FFFFFF?text=Encryption"
+              },
+              { 
+                title: "What Cookies Say Behind Your Back", 
+                concept: "Web Security",
+                excerpt: "The silent data collectors that follow you across the web aren't just harmless text files. Here's what they know about you.",
+                readTime: "12 min read",
+                date: "May 3",
+                imageUrl: "https://via.placeholder.com/600x400/ef4444/FFFFFF?text=Web+Security"
+              },
+              { 
+                title: "The Tale of Two Hackers and One Hash", 
+                concept: "Hashing Algorithms",
+                excerpt: "When two security researchers approached the same problem with different methods, they uncovered a fundamental flaw in how we think about data integrity.",
+                readTime: "15 min read",
+                date: "Apr 28",
+                imageUrl: "https://via.placeholder.com/600x400/10b981/FFFFFF?text=Hashing"
+              },
+            ].map((post, idx) => (
+              <div key={idx} className="col-md-4">
+                <div className="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                  <img src={post.imageUrl} className="card-img-top" alt={post.title} />
+                  <div className="card-body">
+                    <span className="badge bg-primary mb-2">{post.concept}</span>
+                    <h3 className="card-title h5 fw-bold">{post.title}</h3>
+                    <p className="card-text text-muted">{post.excerpt}</p>
+                  </div>
+                  <div className="card-footer bg-white border-0 text-muted">
+                    <small>{post.readTime} • {post.date}</small>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Interactive Tools Section with Hexagon Shapes */}
+        <section className="mb-5 py-4">
+          <div className="text-center mb-5">
+            <h2 className="display-6 fw-bold mb-3">Interactive Security Playground</h2>
+            <p className="lead text-muted mx-auto" style={{ maxWidth: "700px" }}>
+              Experiment with cybersecurity concepts in our interactive playground
+            </p>
+          </div>
+          <div className="text-end mb-4">
+            <a href="#" className = "text-primary text-decoration-none">View all</a>
+          </div>
+        
+          
+          <div className="row g-4 justify-content-center">
+            {[
+              { name: "Caesar Cipher", icon: "bi-lock", color: "#4f46e5", description: "Encrypt and decrypt messages using this classical cipher" },
+              { name: "Hash Playground", icon: "bi-hash", color: "#0891b2", description: "See how hashing algorithms transform your input" },
+              { name: "SQL Injection", icon: "bi-database", color: "#db2777", description: "Test SQL injection attacks in a safe environment" },
+              { name: "Signature Verifier", icon: "bi-key", color: "#ca8a04", description: "Verify digital signatures with public key cryptography" },
+            ].map((tool, idx) => (
+              <div key={idx} className="col-md-6 col-lg-3">
+                <div className="card border-0 text-center h-100 shadow-sm">
+                  <div className="card-body">
+                    <div className="d-flex justify-content-center mb-3">
+                      <div className="d-flex align-items-center justify-content-center rounded-circle" 
+                           style={{ 
+                             width: "80px", 
+                             height: "80px", 
+                             backgroundColor: tool.color,
+                             boxShadow: `0 10px 20px rgba(0,0,0,0.1)`
+                           }}>
+                        <i className={`${tool.icon} text-white fs-2`}></i>
+                      </div>
+                    </div>
+                    <h3 className="h5 fw-bold">{tool.name}</h3>
+                    <p className="text-muted">{tool.description}</p>
+                    <button className="btn btn-sm btn-outline-primary rounded-pill mt-2">Try it</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Call to Action */}
+        <section className="text-center py-5">
+          <div className="p-5 rounded-3 bg-primary text-white">
+            <h2 className="display-6 fw-bold mb-3">Want to share your thoughts?</h2>
+            <p className="lead mb-4">Join thousands of authors sharing their ideas with the community</p>
+            <button className="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold">
+              Start Writing
+            </button>
+          </div>
+        </section>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-dark text-white py-4 mt-5">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-6">
+              <div className="d-flex align-items-center mb-3">
+                <i className="bi bi-shield-lock fs-3 me-2"></i>
+                <span className="fs-4 fw-bold">Cyber<span className="fw-light">Insights</span></span>
+              </div>
+              <p className="text-muted">Learn cybersecurity through immersive stories and hands-on simulations.</p>
+            </div>
+            <div className="col-md-6 text-md-end">
+              <div className="d-flex justify-content-md-end gap-3 mb-3">
+                <a href="#" className="text-white fs-5"><i className="bi bi-twitter"></i></a>
+                <a href="#" className="text-white fs-5"><i className="bi bi-linkedin"></i></a>
+                <a href="#" className="text-white fs-5"><i className="bi bi-github"></i></a>
+                <a href="#" className="text-white fs-5"><i className="bi bi-youtube"></i></a>
+              </div>
+              <p className="text-muted">© 2025 CyberInsights. All rights reserved.</p>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      {/* Import Bootstrap Icons CSS */}
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
+      
+      {/* Custom Styles */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .hover-shadow:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+        .transition-all {
+          transition: all 0.3s ease;
+        }
+        .blinking-cursor {
+          animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+          from, to { opacity: 1 }
+          50% { opacity: 0 }
+        }
+      `}} />
+    </div>
+  );
+}
