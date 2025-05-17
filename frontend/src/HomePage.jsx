@@ -1,6 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { getArticles } from './api/getArticle.js';
+import { getFeaturedArticles } from './api/getArticle.js';
+
 
 export default function HomePage() {
+
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      setLoading(true);
+      try {
+        const featuredArticles = await getFeaturedArticles();
+        console.log("Featured Articles:", featuredArticles);
+        setArticles(featuredArticles || []);
+      } catch (err) {
+        console.error("Error fetching featured articles:", err);
+        setArticles([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeatured();
+  }, []);
+
   return (
     <div className="bg-light">
       {/* Hero Section with Background Pattern */}
@@ -45,7 +71,9 @@ export default function HomePage() {
               <h1 className="display-3 fw-bold mb-3">Cybersecurity Through Stories</h1>
               <p className="lead fs-4 mb-4">Immersive narratives and hands-on simulations that make security concepts stick</p>
               <div className="d-flex gap-3">
-                <button className="btn btn-light btn-lg rounded-pill px-4">Start reading</button>
+                <Link to="/articles" className="btn btn-light btn-lg rounded-pill px-4">
+                Start reading
+                </Link>
               </div>
             </div>
             <div className="col-lg-6 text-center">
@@ -93,56 +121,46 @@ export default function HomePage() {
 
       {/* Main Content */}
       <div className="container py-5">
-        {/* Featured Stories with Cards */}
-        <section className="mb-5">
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2 className="fs-4 fw-bold">FEATURED STORIES</h2>
-            <a href="#" className="text-primary text-decoration-none">View all</a>
-          </div>
-          
-          <div className="row g-4">
-            {[
-              { 
-                title: "How I Cracked My Friend's Secret Code", 
-                concept: "Symmetric Encryption",
-                excerpt: "What started as a friendly challenge turned into a deep dive into the world of encryption algorithms and their vulnerabilities.",
-                readTime: "8 min read",
-                date: "May 10",
-                imageUrl: "https://via.placeholder.com/600x400/3b82f6/FFFFFF?text=Encryption"
-              },
-              { 
-                title: "What Cookies Say Behind Your Back", 
-                concept: "Web Security",
-                excerpt: "The silent data collectors that follow you across the web aren't just harmless text files. Here's what they know about you.",
-                readTime: "12 min read",
-                date: "May 3",
-                imageUrl: "https://via.placeholder.com/600x400/ef4444/FFFFFF?text=Web+Security"
-              },
-              { 
-                title: "The Tale of Two Hackers and One Hash", 
-                concept: "Hashing Algorithms",
-                excerpt: "When two security researchers approached the same problem with different methods, they uncovered a fundamental flaw in how we think about data integrity.",
-                readTime: "15 min read",
-                date: "Apr 28",
-                imageUrl: "https://via.placeholder.com/600x400/10b981/FFFFFF?text=Hashing"
-              },
-            ].map((post, idx) => (
-              <div key={idx} className="col-md-4">
-                <div className="card h-100 border-0 shadow-sm hover-shadow transition-all">
-                  <img src={post.imageUrl} className="card-img-top" alt={post.title} />
-                  <div className="card-body">
-                    <span className="badge bg-primary mb-2">{post.concept}</span>
-                    <h3 className="card-title h5 fw-bold">{post.title}</h3>
-                    <p className="card-text text-muted">{post.excerpt}</p>
-                  </div>
-                  <div className="card-footer bg-white border-0 text-muted">
-                    <small>{post.readTime} • {post.date}</small>
-                  </div>
+      {/* Featured Stories Section */}
+      <section className="py-5">
+      <div className="container">
+      <h2 className="text-center fw-bold mb-5">Featured Stories</h2>
+      {loading ? (
+         <div className="text-center">Loading articles...</div>
+         ) : articles.length === 0 ? (
+            <div className="text-center">No articles available.</div>
+            ) : (
+                <div className="row row-cols-1 row-cols-md-3 g-4">
+                {articles.map(({ fields }) => {
+                  const { slug, title, subtitle, authorName, publishedDate, coverImage, readTime } = fields;
+                  return (
+                    <div key={slug} className="col-lg-4 col-md-6 mb-4">
+                    <div className="card h-100">
+                    {coverImage && coverImage.fields && (
+                    <img
+                      src={`https:${coverImage.fields.file.url}`}
+                      className="card-img-top"
+                      alt={coverImage.fields.title}
+                    />
+                  )}
+                  <div className="card-body d-flex flex-column">
+                  <h5 className="card-title">{title}</h5>
+                  <p className="card-text">{subtitle}</p>
+                  <p className="card-text mt-auto">
+                    <small className="text-muted">
+                      by {authorName} on {new Date(publishedDate).toLocaleDateString()} &middot; {readTime} min read
+                    </small>
+                  </p>
+                  <a href={`/articles/${slug}`} className="btn btn-primary mt-2">Read More</a>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
+            </div>
+          );
+        })}
+        </div>
+      )}
+    </div>
+  </section>
 
         {/* Interactive Tools Section with Hexagon Shapes */}
         <section className="mb-5 py-4">
