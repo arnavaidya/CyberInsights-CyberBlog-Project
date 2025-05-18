@@ -56,7 +56,7 @@ export default function HomePage() {
                   <a className="nav-link" href="#">Playground</a>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link" href="#">Sign In</a>
+                  <a className="nav-link" href="#">News</a>
                 </li>
               </ul>
               <button className="btn btn-light rounded-pill px-4">Get Started</button>
@@ -132,7 +132,7 @@ export default function HomePage() {
             ) : (
                 <div className="row row-cols-1 row-cols-md-3 g-4">
                 {articles.map(({ fields }) => {
-                  const { slug, title, subtitle, authorName, publishedDate, coverImage, readTime } = fields;
+                  const { slug, title, subtitle, authorName, publishedDate, coverImage, tags, readTime } = fields;
                   return (
                     <div key={slug} className="col-lg-4 col-md-6 mb-4">
                     <div className="card h-100">
@@ -146,6 +146,12 @@ export default function HomePage() {
                   <div className="card-body d-flex flex-column">
                   <h5 className="card-title">{title}</h5>
                   <p className="card-text">{subtitle}</p>
+                  <div>{tags && tags.map((tag, index) => (
+                        <span className= "badge bg-primary mb-2" key={index} style={{ marginRight: '8px' }}>
+                          {tag}
+                        </span>
+                      ))}
+                  </div>
                   <p className="card-text mt-auto">
                     <small className="text-muted">
                       by {authorName} on {new Date(publishedDate).toLocaleDateString()} &middot; {readTime} min read

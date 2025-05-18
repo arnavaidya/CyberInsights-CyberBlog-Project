@@ -32,7 +32,11 @@ export default function ArticlesPage() {
                       alt={title}
                     />
                     <div className="card-body">
-                      {tags && <span className="badge bg-primary mb-2">{tags[0]}</span>}
+                      {tags && tags.map((tag, index) => (
+                        <span className= "badge bg-primary mb-2" key={index} style={{ marginRight: '8px' }}>
+                          {tag}
+                        </span>
+                      ))}
                       <h3 className="card-title h5 fw-bold">{title}</h3>
                       <p className="card-text text-muted">{subtitle}</p>
                     </div>
