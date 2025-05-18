@@ -37,10 +37,10 @@ export default function HomePage() {
         {/* Navbar */}
         <nav className="navbar navbar-expand-lg navbar-dark">
           <div className="container">
-            <a className="navbar-brand d-flex align-items-center" href="#">
-              <i className="bi bi-shield-lock fs-3 me-2"></i>
-              <span className="fw-bold">Cyber<span className="fw-light">Insights</span></span>
-            </a>
+          <Link className="navbar-brand d-flex align-items-center" to="/">
+            <i className="bi bi-shield-lock fs-3 me-2"></i>
+            <span className="fw-bold">Cyber<span className="fw-light">Insights</span></span>
+          </Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
               <span className="navbar-toggler-icon"></span>
             </button>
