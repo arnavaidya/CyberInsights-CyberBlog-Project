@@ -1,33 +1,54 @@
 import { useEffect, useState, useRef } from 'react';
 import { getArticles } from '../api/getArticle';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
-export default function ArticlesPage() {
+export default function TagArticlesPage() {
+  const { tagSlug } = useParams();
+  const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('all');
+  const [currentTag, setCurrentTag] = useState('');
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
   const [topAuthors, setTopAuthors] = useState([]);
   const tabsContainerRef = useRef(null);
   
-  // Tab data with display names and values for better maintainability
-  const tabs = [
-    { value: 'all', display: 'All Articles' },
-    { value: 'network', display: 'Network Security' },
-    { value: 'web', display: 'Web Security' },
-    { value: 'cloud', display: 'Cloud Security' },
-    { value: 'app', display: 'Application Security' },
-    { value: 'ai', display: 'AI Security' },
-    { value: 'iot', display: 'IoT Security' },
-    { value: 'mob', display: 'Mobile Security' },
-    { value: 'crypto', display: 'Cryptography' },
-    { value: 'pentest', display: 'Penetration Testing' },
-    { value: 'auth', display: 'Authentication & Authorization' },
-    { value: 'malware', display: 'Malware Analysis' },
-    { value: 'privacy', display: 'Data Privacy' },
+  // Define all available tags for navigation with proper casing
+  const discoverTags = [
+    'Ransomware',
+    'Zero Trust',
+    'Encryption',
+    'OWASP Top 10',
+    'Threat Intel',
+    'Security Testing',
+    'GRC',
+    'Social Engineering'
   ];
+  
+  // Create a mapping between slug and proper display name
+  const slugToTagMap = {};
+  discoverTags.forEach(tag => {
+    slugToTagMap[tag.toLowerCase().replace(/\s+/g, '-')] = tag;
+  });
+  
+  // Convert URL slug to display name preserving original casing
+  const slugToDisplayName = (slug) => {
+    if (!slug) return '';
+    
+    // Use the mapping to get the proper cased tag name
+    return slugToTagMap[slug] || 
+      // Fallback to capitalize each word if not found in map
+      slug.split('-')
+         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+         .join(' ');
+  };
+  
+  // Convert display name to slug
+  const displayNameToSlug = (displayName) => {
+    if (!displayName) return '';
+    return displayName.toLowerCase().replace(/\s+/g, '-');
+  };
   
   // Check scroll position and update arrow visibility
   const checkScrollPosition = () => {
@@ -43,27 +64,28 @@ export default function ArticlesPage() {
   };
   
   useEffect(() => {
+    // Find the properly cased tag from the slug
+    const properCasedTag = slugToDisplayName(tagSlug);
+    setCurrentTag(properCasedTag);
+    
     const fetchArticles = async () => {
       setLoading(true);
       try {
         const data = await getArticles();
-        console.log("Fetched Articles:", data);
         setArticles(data || []);
-        setFilteredArticles(data || []);
         
         // Calculate top 5 authors based on number of articles
         calculateTopAuthors(data);
       } catch (err) {
         console.error("Error fetching articles:", err);
         setArticles([]);
-        setFilteredArticles([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchArticles();
-  }, []);
+  }, [tagSlug]);
 
   // Calculate the top 5 authors based on publication count
   const calculateTopAuthors = (articles) => {
@@ -127,37 +149,23 @@ export default function ArticlesPage() {
     };
   }, []);
 
-  // Filter articles based on selected tab
+  // Filter articles based on selected tag
   useEffect(() => {
-    if (activeTab === 'all') {
-      setFilteredArticles(articles);
-    } else {
-      // Map tab names to expected tag values
-      const tabToTagMap = {
-        'network': 'Network Security',
-        'web': 'Web Security',
-        'cloud': 'Cloud Security',
-        'app': 'Application Security',
-        'ai': 'AI Security',
-        'iot': 'IoT Security',
-        'mob': 'Mobile Security',
-        'crypto': 'Cryptography',
-        'pentest': 'Penetration Testing',
-        'auth': 'Authentication & Authorization',
-        'malware': 'Malware Analysis',
-        'privacy': 'Data Privacy'
-      };
-      
-      const selectedTag = tabToTagMap[activeTab];
-      
-      const filtered = articles.filter(article => {
-        const tags = article.fields.tags || [];
-        return tags.some(tag => tag === selectedTag);
-      });
-      
-      setFilteredArticles(filtered);
-    }
-  }, [activeTab, articles]);
+    if (!articles.length || !currentTag) return;
+    
+    const filtered = articles.filter(article => {
+      const tags = article.fields.tags || [];
+      // Case-insensitive comparison to handle tags with different casings
+      return tags.some(tag => tag.toLowerCase() === currentTag.toLowerCase());
+    });
+    
+    setFilteredArticles(filtered);
+  }, [currentTag, articles]);
+  
+  // Handle tag selection
+  const handleTagChange = (tagName) => {
+    navigate(`/tags/${displayNameToSlug(tagName)}`);
+  };
   
   // Handle scrolling functions
   const scrollLeft = () => {
@@ -172,6 +180,11 @@ export default function ArticlesPage() {
     if (container) {
       container.scrollLeft += 200;
     }
+  };
+
+  // Helper function to check if a tag matches the current tag (case insensitive)
+  const isCurrentTag = (tag) => {
+    return tag.toLowerCase() === currentTag.toLowerCase();
   };
 
   return (
@@ -192,6 +205,9 @@ export default function ArticlesPage() {
                 <Link className="nav-link" to="/">Home</Link>
               </li>
               <li className="nav-item">
+                <Link className="nav-link" to="/articles">Articles</Link>
+              </li>
+              <li className="nav-item">
                 <a className="nav-link" href="#">About Us</a>
               </li>
               <li className="nav-item">
@@ -208,16 +224,21 @@ export default function ArticlesPage() {
 
       {/* Main Content */}
       <div className="container py-4">
+        {/* Page Header */}
+        <div className="mb-4">
+          <h1 className="h3 fw-bold">{currentTag || 'Tagged Articles'}</h1>
+          <p className="text-muted">Discover the latest insights on {currentTag}</p>
+        </div>
+        
         {/* Category Tabs - Medium-style with conditional scroll arrows */}
         <div className="border-bottom mb-4 position-relative">
           <div className="position-relative">
             {/* Left scroll arrow - only visible after scrolling right */}
             {showLeftArrow && (
               <button 
-                className="btn position-absolute top-50 z-1 bg-white bg-opacity-75 rounded-circle p-1 shadow-sm border-0 arrow-fade-in"
-                style={{ width: "28px", height: "28px", left: "0", transform: "translateY(-50%)" }}
+                className="btn position-absolute top-50 translate-middle-y z-1 bg-white bg-opacity-75 rounded-circle p-1 shadow-sm border-0 arrow-fade-in"
+                style={{ width: "28px", height: "28px", left: "0", transform: "translateY(-65%)" }}
                 onClick={scrollLeft}
-                aria-label="Scroll left"
               >
                 <i className="bi bi-chevron-left"></i>
               </button>
@@ -229,13 +250,13 @@ export default function ArticlesPage() {
               className="d-flex flex-nowrap overflow-auto hide-scrollbar pb-2 px-3" 
               style={{ gap: "1.5rem", scrollBehavior: "smooth" }}
             >
-              {tabs.map((tab) => (
+              {discoverTags.map((tag) => (
                 <button 
-                  key={tab.value}
-                  className={`btn btn-link text-decoration-none fw-medium px-2 text-nowrap ${activeTab === tab.value ? 'text-dark fw-bold' : 'text-muted'}`}
-                  onClick={() => setActiveTab(tab.value)}
+                  key={tag}
+                  className={`btn btn-link text-decoration-none fw-medium px-2 text-nowrap ${isCurrentTag(tag) ? 'text-dark fw-bold' : 'text-muted'}`}
+                  onClick={() => handleTagChange(tag)}
                 >
-                  {tab.display}
+                  {tag}
                 </button>
               ))}
             </div>
@@ -243,10 +264,9 @@ export default function ArticlesPage() {
             {/* Right scroll arrow - only visible when there's more content to scroll */}
             {showRightArrow && (
               <button 
-                className="btn position-absolute top-50 z-1 bg-white bg-opacity-75 rounded-circle p-1 shadow-sm border-0 arrow-fade-in"
-                style={{ width: "28px", height: "28px", right: "0", transform: "translateY(-50%)" }}
+                className="btn position-absolute top-50 translate-middle-y z-1 bg-white bg-opacity-75 rounded-circle p-1 shadow-sm border-0 arrow-fade-in"
+                style={{ width: "28px", height: "28px", right: "0"}}
                 onClick={scrollRight}
-                aria-label="Scroll right"
               >
                 <i className="bi bi-chevron-right"></i>
               </button>
@@ -279,7 +299,10 @@ export default function ArticlesPage() {
             ) : filteredArticles.length === 0 ? (
               <div className="text-center py-5">
                 <i className="bi bi-emoji-frown fs-1 text-muted"></i>
-                <p className="mt-3">No articles available in this category.</p>
+                <p className="mt-3">No articles available for {currentTag}.</p>
+                <Link to="/articles" className="btn btn-outline-primary mt-2">
+                  Explore all articles
+                </Link>
               </div>
             ) : (
               <div>
@@ -292,16 +315,12 @@ export default function ArticlesPage() {
                           <div className="d-flex align-items-center mb-2">
                             <div className="d-flex align-items-center">
                               <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" style={{ width: "24px", height: "24px" }}>
-                                <span className="text-white small" style={{ fontSize: "12px" }}>{authorName ? authorName.charAt(0) : 'A'}</span>
+                                <span className="text-white small" style={{ fontSize: "12px" }}>{authorName.charAt(0)}</span>
                               </div>
-                              <span className="small text-muted">{authorName || 'Anonymous'}</span>
+                              <span className="small text-muted">{authorName}</span>
                             </div>
                             <span className="mx-2 text-muted">·</span>
-                            <span className="small text-muted">
-                              {publishedDate 
-                                ? new Date(publishedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-                                : 'No date'}
-                            </span>
+                            <span className="small text-muted">{new Date(publishedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                           </div>
                           
                           <Link to={`/articles/${slug}`} className="text-decoration-none text-dark">
@@ -310,9 +329,12 @@ export default function ArticlesPage() {
                           </Link>
                           
                           <div className="d-flex align-items-center">
-                            <span className="badge bg-light text-dark me-2">{readTime || '5'} min read</span>
+                            <span className="badge bg-light text-dark me-2">{readTime} min read</span>
                             {tags && tags.slice(0, 2).map((tag, index) => (
-                              <span className="badge bg-primary text-light me-2" key={index}>
+                              <span 
+                                className={`badge me-2 ${isCurrentTag(tag) ? 'bg-primary text-light' : 'bg-light text-dark'}`} 
+                                key={index}
+                              >
                                 {tag}
                               </span>
                             ))}
@@ -320,7 +342,7 @@ export default function ArticlesPage() {
                         </div>
                         
                         <div className="col-md-4 mt-3 mt-md-0">
-                          {coverImage && coverImage.fields && coverImage.fields.file ? (
+                          {coverImage && coverImage.fields && (
                             <Link to={`/articles/${slug}`}>
                               <img
                                 src={`https:${coverImage.fields.file.url}`}
@@ -328,13 +350,6 @@ export default function ArticlesPage() {
                                 alt={title}
                                 style={{ objectFit: "cover", height: "120px", width: "100%" }}
                               />
-                            </Link>
-                          ) : (
-                            <Link to={`/articles/${slug}`}>
-                              <div className="bg-light rounded d-flex align-items-center justify-content-center" 
-                                   style={{ height: "120px", width: "100%" }}>
-                                <i className="bi bi-image text-muted fs-3"></i>
-                              </div>
                             </Link>
                           )}
                         </div>
@@ -351,18 +366,18 @@ export default function ArticlesPage() {
             <div className="ps-4">
               <div className="sticky-top" style={{ top: "20px" }}>
                 <div className="mb-4">
-                  <h5 className="fw-bold mb-3">Discover more</h5>
-                  <div className="mb-4">
-                    <div className="d-flex flex-wrap gap-2">
-                      <Link to="/tags/ransomware" className="badge bg-light text-dark text-decoration-none p-2">Ransomware</Link>
-                      <Link to="/tags/zero-trust" className="badge bg-light text-dark text-decoration-none p-2">Zero Trust</Link>
-                      <Link to="/tags/encryption" className="badge bg-light text-dark text-decoration-none p-2">Encryption</Link>
-                      <Link to="/tags/owasp-top-10" className="badge bg-light text-dark text-decoration-none p-2">OWASP Top 10</Link>
-                      <Link to="/tags/threat-intel" className="badge bg-light text-dark text-decoration-none p-2">Threat Intel</Link>
-                      <Link to="/tags/security-testing" className="badge bg-light text-dark text-decoration-none p-2">Security Testing</Link>
-                      <Link to="/tags/grc" className="badge bg-light text-dark text-decoration-none p-2">GRC</Link>
-                      <Link to="/tags/social-engineering" className="badge bg-light text-dark text-decoration-none p-2">Social Engineering</Link>
-                    </div>
+                  <h5 className="fw-bold mb-3">Browse by topic</h5>
+                  <div className="d-flex flex-wrap gap-2">
+                    <Link to="/articles" className="badge bg-light text-dark text-decoration-none p-2">All Articles</Link>
+                    {discoverTags.map((tag, index) => (
+                      <Link 
+                        key={index} 
+                        to={`/tags/${displayNameToSlug(tag)}`} 
+                        className={`badge text-decoration-none p-2 ${isCurrentTag(tag) ? 'bg-primary text-white' : 'bg-light text-dark'}`}
+                      >
+                        {tag}
+                      </Link>
+                    ))}
                   </div>
                 </div>
                 
@@ -371,7 +386,7 @@ export default function ArticlesPage() {
                     <h5 className="card-title fw-bold mb-3">Stay updated</h5>
                     <p className="card-text text-muted">Get the latest cybersecurity insights delivered to your inbox</p>
                     <div className="input-group mb-3">
-                      <input type="email" className="form-control" placeholder="Enter your email" aria-label="Email address" />
+                      <input type="email" className="form-control" placeholder="Enter your email" />
                       <button className="btn btn-primary" type="button">Subscribe</button>
                     </div>
                   </div>
@@ -404,6 +419,32 @@ export default function ArticlesPage() {
                     )}
                   </div>
                 </div>
+                
+                <div className="card border bg-white mb-4">
+                  <div className="card-body">
+                    <h5 className="card-title fw-bold mb-3">Related resources</h5>
+                    <ul className="list-unstyled mb-0">
+                      <li className="mb-2">
+                        <a href="#" className="text-decoration-none d-flex align-items-center">
+                          <i className="bi bi-file-earmark-text me-2 text-primary"></i>
+                          <span>{currentTag} Guide</span>
+                        </a>
+                      </li>
+                      <li className="mb-2">
+                        <a href="#" className="text-decoration-none d-flex align-items-center">
+                          <i className="bi bi-play-circle me-2 text-primary"></i>
+                          <span>Webinar: {currentTag} Explained</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#" className="text-decoration-none d-flex align-items-center">
+                          <i className="bi bi-tools me-2 text-primary"></i>
+                          <span>{currentTag} Tools</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -423,10 +464,10 @@ export default function ArticlesPage() {
             </div>
             <div className="col-md-6 text-md-end">
               <div className="d-flex justify-content-md-end gap-3 mb-3">
-                <a href="#" className="text-white fs-5" aria-label="Twitter"><i className="bi bi-twitter"></i></a>
-                <a href="#" className="text-white fs-5" aria-label="LinkedIn"><i className="bi bi-linkedin"></i></a>
-                <a href="#" className="text-white fs-5" aria-label="GitHub"><i className="bi bi-github"></i></a>
-                <a href="#" className="text-white fs-5" aria-label="YouTube"><i className="bi bi-youtube"></i></a>
+                <a href="#" className="text-white fs-5"><i className="bi bi-twitter"></i></a>
+                <a href="#" className="text-white fs-5"><i className="bi bi-linkedin"></i></a>
+                <a href="#" className="text-white fs-5"><i className="bi bi-github"></i></a>
+                <a href="#" className="text-white fs-5"><i className="bi bi-youtube"></i></a>
               </div>
               <p className="text-muted">© 2025 CyberInsights. All rights reserved.</p>
             </div>
