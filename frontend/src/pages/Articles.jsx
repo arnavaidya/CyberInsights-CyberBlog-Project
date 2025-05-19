@@ -192,6 +192,9 @@ export default function ArticlesPage() {
                 <Link className="nav-link" to="/">Home</Link>
               </li>
               <li className="nav-item">
+                <Link className="nav-link active" to="/articles">Articles</Link>
+              </li>
+              <li className="nav-item">
                 <a className="nav-link" href="#">About Us</a>
               </li>
               <li className="nav-item">
@@ -291,10 +294,14 @@ export default function ArticlesPage() {
                         <div className="col-md-8">
                           <div className="d-flex align-items-center mb-2">
                             <div className="d-flex align-items-center">
-                              <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" style={{ width: "24px", height: "24px" }}>
-                                <span className="text-white small" style={{ fontSize: "12px" }}>{authorName ? authorName.charAt(0) : 'A'}</span>
-                              </div>
-                              <span className="small text-muted">{authorName || 'Anonymous'}</span>
+                              <Link to={`/author/${authorName}`} className="text-decoration-none">
+                                <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" style={{ width: "24px", height: "24px" }}>
+                                  <span className="text-white small" style={{ fontSize: "12px" }}>{authorName ? authorName.charAt(0) : 'A'}</span>
+                                </div>
+                              </Link>
+                              <Link to={`/author/${authorName}`} className="text-decoration-none text-muted">
+                                <span className="small">{authorName || 'Anonymous'}</span>
+                              </Link>
                             </div>
                             <span className="mx-2 text-muted">·</span>
                             <span className="small text-muted">
@@ -390,16 +397,23 @@ export default function ArticlesPage() {
                       <p className="text-muted">No authors available</p>
                     ) : (
                       topAuthors.map((author, idx) => (
-                        <div key={idx} className="d-flex align-items-center">
+                        <Link 
+                          key={idx} 
+                          to={`/author/${author.name}`} 
+                          className="d-flex align-items-center text-decoration-none text-dark transition-all hover-author"
+                        >
                           <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" 
                                style={{ width: "32px", height: "32px" }}>
                             <span className="text-white">{author.name.charAt(0)}</span>
                           </div>
                           <div>
                             <p className="mb-0 fw-medium">{author.name}</p>
-                            <small className="text-muted">{author.role}</small>
+                            <div className="d-flex align-items-center">
+                              <small className="text-muted">{author.role}</small>
+                              <span className="mx-1 text-muted"></span>
+                            </div>
                           </div>
-                        </div>
+                        </Link>
                       ))
                     )}
                   </div>
@@ -455,6 +469,12 @@ export default function ArticlesPage() {
         }
         .arrow-fade-in {
           animation: fadeIn 0.2s ease-in;
+        }
+        .hover-author:hover {
+          background-color: rgba(13, 110, 253, 0.05);
+          border-radius: 6px;
+          padding: 8px;
+          margin: -8px;
         }
         @keyframes fadeIn {
           from { opacity: 0; }
