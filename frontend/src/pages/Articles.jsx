@@ -178,7 +178,7 @@ export default function ArticlesPage() {
             {showLeftArrow && (
               <button 
                 className="btn position-absolute top-50 translate-middle-y z-1 bg-white bg-opacity-75 rounded-circle p-1 shadow-sm border-0 arrow-fade-in"
-                style={{ width: "28px", height: "28px", left: "0", transform: "translateY(-65%)" }}
+                style={{ width: "28px", height: "28px", left: "0"}}
                 onClick={scrollLeft}
               >
                 <i className="bi bi-chevron-left"></i>
