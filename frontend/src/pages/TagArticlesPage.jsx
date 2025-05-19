@@ -205,9 +205,6 @@ export default function TagArticlesPage() {
                 <Link className="nav-link" to="/">Home</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/articles">Articles</Link>
-              </li>
-              <li className="nav-item">
                 <a className="nav-link" href="#">About Us</a>
               </li>
               <li className="nav-item">
