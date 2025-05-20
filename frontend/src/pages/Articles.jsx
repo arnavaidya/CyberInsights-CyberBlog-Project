@@ -192,9 +192,6 @@ export default function ArticlesPage() {
                 <Link className="nav-link" to="/">Home</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link active" to="/articles">Articles</Link>
-              </li>
-              <li className="nav-item">
                 <a className="nav-link" href="#">About Us</a>
               </li>
               <li className="nav-item">
@@ -369,17 +366,6 @@ export default function ArticlesPage() {
                       <Link to="/tags/security-testing" className="badge bg-light text-dark text-decoration-none p-2">Security Testing</Link>
                       <Link to="/tags/grc" className="badge bg-light text-dark text-decoration-none p-2">GRC</Link>
                       <Link to="/tags/social-engineering" className="badge bg-light text-dark text-decoration-none p-2">Social Engineering</Link>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="card border-0 bg-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title fw-bold mb-3">Stay updated</h5>
-                    <p className="card-text text-muted">Get the latest cybersecurity insights delivered to your inbox</p>
-                    <div className="input-group mb-3">
-                      <input type="email" className="form-control" placeholder="Enter your email" aria-label="Email address" />
-                      <button className="btn btn-primary" type="button">Subscribe</button>
                     </div>
                   </div>
                 </div>

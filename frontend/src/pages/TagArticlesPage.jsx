@@ -382,17 +382,6 @@ export default function TagArticlesPage() {
                   </div>
                 </div>
                 
-                <div className="card border-0 bg-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title fw-bold mb-3">Stay updated</h5>
-                    <p className="card-text text-muted">Get the latest cybersecurity insights delivered to your inbox</p>
-                    <div className="input-group mb-3">
-                      <input type="email" className="form-control" placeholder="Enter your email" />
-                      <button className="btn btn-primary" type="button">Subscribe</button>
-                    </div>
-                  </div>
-                </div>
-                
                 <div className="mb-4">
                   <h5 className="fw-bold mb-3">Top writers</h5>
                   <div className="d-flex flex-column gap-3">
