@@ -1,34 +1,33 @@
 import { useEffect, useState, useRef } from 'react';
-import { getArticles } from '../api/getArticle';
 import { Link } from 'react-router-dom';
 
-export default function ArticlesPage() {
+export default function CyberNewsPage() {
   const [articles, setArticles] = useState([]);
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
-  const [topAuthors, setTopAuthors] = useState([]);
+  const [topSources, setTopSources] = useState([]);
   const tabsContainerRef = useRef(null);
+  
+  // Define API key directly for now - in production, use proper environment variable handling
+  // This is a temporary solution until environment variables are properly configured
+  const API_KEY = "19bab821f96341e9b321dc26de511ebd";
   
   // Tab data with display names and values for better maintainability
   const tabs = [
-    { value: 'all', display: 'All Articles' },
-    { value: 'network', display: 'Network Security' },
-    { value: 'web', display: 'Web Security' },
-    { value: 'cloud', display: 'Cloud Security' },
-    { value: 'app', display: 'Application Security' },
+    { value: 'all', display: 'All News' },
+    { value: 'breach', display: 'Data Breaches' },
+    { value: 'ransomware', display: 'Ransomware' },
+    { value: 'vulnerability', display: 'Vulnerabilities' },
+    { value: 'phishing', display: 'Phishing' },
+    { value: 'malware', display: 'Malware' },
     { value: 'ai', display: 'AI Security' },
-    { value: 'iot', display: 'IoT Security' },
-    { value: 'mob', display: 'Mobile Security' },
-    { value: 'crypto', display: 'Cryptography' },
-    { value: 'pentest', display: 'Penetration Testing' },
-    { value: 'auth', display: 'Authentication & Authorization' },
-    { value: 'malware', display: 'Malware Analysis' },
-    { value: 'privacy', display: 'Data Privacy' },
+    { value: 'policy', display: 'Policy & Regulation' },
+    { value: 'privacy', display: 'Privacy' },
   ];
-  
+
   // Check scroll position and update arrow visibility
   const checkScrollPosition = () => {
     const container = tabsContainerRef.current;
@@ -43,18 +42,46 @@ export default function ArticlesPage() {
   };
   
   useEffect(() => {
-    const fetchArticles = async () => {
+    const fetchNews = async () => {
       setLoading(true);
       try {
-        const data = await getArticles();
-        console.log("Fetched Articles:", data);
-        setArticles(data || []);
-        setFilteredArticles(data || []);
+        // More specific cybersecurity query with multiple terms to ensure relevance
+        const query = 'cybersecurity AND (breach OR hack OR vulnerability OR threat OR ransomware OR malware OR phishing)';
         
-        // Calculate top 5 authors based on number of articles
-        calculateTopAuthors(data);
-      } catch (err) {
-        console.error("Error fetching articles:", err);
+        const res = await fetch(
+          `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&language=en&pageSize=20&apiKey=${API_KEY}`
+        );
+        const data = await res.json();
+        
+        if (data.status === 'ok' && data.articles) {
+          // Filter articles server-side to ensure cybersecurity relevance
+          const cybersecurityArticles = data.articles.filter(article => {
+            const title = (article.title || '').toLowerCase();
+            const description = (article.description || '').toLowerCase();
+            
+            // Keywords that indicate cybersecurity relevance
+            const securityKeywords = [
+              'cyber', 'security', 'hack', 'breach', 'malware', 'ransomware', 
+              'phishing', 'vulnerability', 'exploit', 'threat', 'attack',
+              'cve', 'patch', 'data leak', 'privacy', 'encryption'
+            ];
+            
+            // Check if the article contains at least one cybersecurity keyword
+            return securityKeywords.some(keyword => 
+              title.includes(keyword) || description.includes(keyword)
+            );
+          });
+          
+          setArticles(cybersecurityArticles);
+          setFilteredArticles(cybersecurityArticles);
+          calculateTopSources(cybersecurityArticles);
+        } else {
+          console.error("API returned an error:", data.message);
+          setArticles([]);
+          setFilteredArticles([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch news:", error);
         setArticles([]);
         setFilteredArticles([]);
       } finally {
@@ -62,40 +89,38 @@ export default function ArticlesPage() {
       }
     };
 
-    fetchArticles();
+    fetchNews();
   }, []);
 
-  // Calculate the top 5 authors based on publication count
-  const calculateTopAuthors = (articles) => {
+  // Calculate the top 5 news sources based on article count
+  const calculateTopSources = (articles) => {
     if (!articles || articles.length === 0) {
-      setTopAuthors([]);
+      setTopSources([]);
       return;
     }
     
-    // Count publications per author
-    const authorCounts = {};
+    // Count articles per source
+    const sourceCounts = {};
     
     articles.forEach(article => {
-      const authorName = article.fields.authorName;
-      if (authorName) {
-        authorCounts[authorName] = (authorCounts[authorName] || 0) + 1;
+      const sourceName = article.source.name;
+      if (sourceName) {
+        sourceCounts[sourceName] = (sourceCounts[sourceName] || 0) + 1;
       }
     });
     
     // Convert to array of objects for sorting
-    const authorArray = Object.keys(authorCounts).map(name => ({
+    const sourceArray = Object.keys(sourceCounts).map(name => ({
       name,
-      count: authorCounts[name],
-      // Extract role from the first article by this author
-      role: articles.find(a => a.fields.authorName === name)?.fields.authorRole || 'Security Researcher'
+      count: sourceCounts[name]
     }));
     
     // Sort by count (descending) and take top 5
-    const sortedAuthors = authorArray
+    const sortedSources = sourceArray
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
     
-    setTopAuthors(sortedAuthors);
+    setTopSources(sortedSources);
   };
 
   // Initialize and set up scroll event listener
@@ -132,27 +157,30 @@ export default function ArticlesPage() {
     if (activeTab === 'all') {
       setFilteredArticles(articles);
     } else {
-      // Map tab names to expected tag values
-      const tabToTagMap = {
-        'network': 'Network Security',
-        'web': 'Web Security',
-        'cloud': 'Cloud Security',
-        'app': 'Application Security',
-        'ai': 'AI Security',
-        'iot': 'IoT Security',
-        'mob': 'Mobile Security',
-        'crypto': 'Cryptography',
-        'pentest': 'Penetration Testing',
-        'auth': 'Authentication & Authorization',
-        'malware': 'Malware Analysis',
-        'privacy': 'Data Privacy'
+      // Map tab values to keywords for searching
+      const tabToKeywordMap = {
+        'breach': ['breach', 'data leak', 'exposed data', 'database exposed', 'leaked'],
+        'ransomware': ['ransomware', 'ransom', 'encrypt files', 'decrypt', 'lockbit', 'ryuk'],
+        'vulnerability': ['vulnerability', 'exploit', 'cve', 'patch', 'zero-day', 'flaw', 'security hole'],
+        'phishing': ['phishing', 'social engineering', 'email scam', 'spoofing'],
+        'malware': ['malware', 'virus', 'trojan', 'backdoor', 'spyware', 'botnet'],
+        'ai': ['ai', 'artificial intelligence', 'machine learning', 'deep fake', 'neural network'],
+        'policy': ['regulation', 'compliance', 'policy', 'gdpr', 'hipaa', 'ccpa', 'law', 'legislation'],
+        'privacy': ['privacy', 'data protection', 'surveillance', 'tracking', 'anonymity']
       };
       
-      const selectedTag = tabToTagMap[activeTab];
+      const keywords = tabToKeywordMap[activeTab];
       
       const filtered = articles.filter(article => {
-        const tags = article.fields.tags || [];
-        return tags.some(tag => tag === selectedTag);
+        const title = (article.title || '').toLowerCase();
+        const description = (article.description || '').toLowerCase();
+        const content = (article.content || '').toLowerCase();
+        
+        return keywords.some(keyword => 
+          title.includes(keyword) || 
+          description.includes(keyword) || 
+          content.includes(keyword)
+        );
       });
       
       setFilteredArticles(filtered);
@@ -172,6 +200,12 @@ export default function ArticlesPage() {
     if (container) {
       container.scrollLeft += 200;
     }
+  };
+
+  // Format publication date
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
   return (
@@ -198,7 +232,7 @@ export default function ArticlesPage() {
                 <a className="nav-link" href="#">Playground</a>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/news">News</Link>
+                <Link className="nav-link active" to="/news">News</Link>
               </li>
             </ul>
             <button className="btn btn-light rounded-pill px-4">Get Started</button>
@@ -208,6 +242,15 @@ export default function ArticlesPage() {
 
       {/* Main Content */}
       <div className="container py-4">
+        {/* Page Title */}
+        <div className="mb-4">
+          <h1 className="h3 fw-bold d-flex align-items-center">
+            <i className="bi bi-newspaper me-2"></i>
+            Cybersecurity News
+          </h1>
+          <p className="text-muted">Stay updated with the latest cybersecurity news and developments</p>
+        </div>
+        
         {/* Category Tabs - Medium-style with conditional scroll arrows */}
         <div className="border-bottom mb-4 position-relative">
           <div className="position-relative">
@@ -266,7 +309,7 @@ export default function ArticlesPage() {
           </div>
         </div>
         
-        {/* Article Listings - Medium-style vertical layout */}
+        {/* News Listings */}
         <div className="row">
           <div className="col-lg-8">
             {loading ? (
@@ -274,72 +317,64 @@ export default function ArticlesPage() {
                 <div className="spinner-border text-primary" role="status">
                   <span className="visually-hidden">Loading...</span>
                 </div>
-                <p className="mt-3">Loading articles...</p>
+                <p className="mt-3">Loading news articles...</p>
               </div>
             ) : filteredArticles.length === 0 ? (
               <div className="text-center py-5">
                 <i className="bi bi-emoji-frown fs-1 text-muted"></i>
-                <p className="mt-3">No articles available in this category.</p>
+                <p className="mt-3">No news articles available in this category.</p>
               </div>
             ) : (
               <div>
                 {filteredArticles.map((article, idx) => {
-                  const { title, slug, subtitle, coverImage, publishedDate, readTime, tags, authorName } = article.fields;
                   return (
                     <article key={idx} className="border-bottom pb-4 mb-4">
                       <div className="row">
                         <div className="col-md-8">
                           <div className="d-flex align-items-center mb-2">
                             <div className="d-flex align-items-center">
-                              <Link to={`/author/${authorName}`} className="text-decoration-none">
+                              <a href="#" className="text-decoration-none">
                                 <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" style={{ width: "24px", height: "24px" }}>
-                                  <span className="text-white small" style={{ fontSize: "12px" }}>{authorName ? authorName.charAt(0) : 'A'}</span>
+                                  <span className="text-white small" style={{ fontSize: "12px" }}>{article.source.name ? article.source.name.charAt(0) : 'N'}</span>
                                 </div>
-                              </Link>
-                              <Link to={`/author/${authorName}`} className="text-decoration-none text-muted">
-                                <span className="small">{authorName || 'Anonymous'}</span>
-                              </Link>
+                              </a>
+                              <a href="#" className="text-decoration-none text-muted">
+                                <span className="small">{article.source.name || 'News Source'}</span>
+                              </a>
                             </div>
                             <span className="mx-2 text-muted">·</span>
                             <span className="small text-muted">
-                              {publishedDate 
-                                ? new Date(publishedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-                                : 'No date'}
+                              {article.publishedAt ? formatDate(article.publishedAt) : 'No date'}
                             </span>
                           </div>
                           
-                          <Link to={`/articles/${slug}`} className="text-decoration-none text-dark">
-                            <h2 className="h4 fw-bold mb-2 lh-sm">{title}</h2>
-                            <p className="text-muted mb-2">{subtitle}</p>
-                          </Link>
-                          
-                          <div className="d-flex align-items-center">
-                            <span className="badge bg-light text-dark me-2">{readTime || '5'} min read</span>
-                            {tags && tags.slice(0, 2).map((tag, index) => (
-                              <span className="badge bg-primary text-light me-2" key={index}>
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
+                          <a href={article.url} target="_blank" rel="noopener noreferrer" className="text-decoration-none text-dark">
+                            <h2 className="h4 fw-bold mb-2 lh-sm">{article.title}</h2>
+                            <p className="text-muted mb-2">{article.description}</p>
+                          </a>
                         </div>
                         
                         <div className="col-md-4 mt-3 mt-md-0">
-                          {coverImage && coverImage.fields && coverImage.fields.file ? (
-                            <Link to={`/articles/${slug}`}>
+                          {article.urlToImage ? (
+                            <a href={article.url} target="_blank" rel="noopener noreferrer">
                               <img
-                                src={`https:${coverImage.fields.file.url}`}
+                                src={article.urlToImage}
                                 className="img-fluid rounded"
-                                alt={title}
+                                alt={article.title}
                                 style={{ objectFit: "cover", height: "120px", width: "100%" }}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "https://via.placeholder.com/300x200?text=No+Image";
+                                }}
                               />
-                            </Link>
+                            </a>
                           ) : (
-                            <Link to={`/articles/${slug}`}>
+                            <a href={article.url} target="_blank" rel="noopener noreferrer">
                               <div className="bg-light rounded d-flex align-items-center justify-content-center" 
                                    style={{ height: "120px", width: "100%" }}>
                                 <i className="bi bi-image text-muted fs-3"></i>
                               </div>
-                            </Link>
+                            </a>
                           )}
                         </div>
                       </div>
@@ -348,64 +383,6 @@ export default function ArticlesPage() {
                 })}
               </div>
             )}
-          </div>
-          
-          {/* Sidebar */}
-          <div className="col-lg-4 d-none d-lg-block">
-            <div className="ps-4">
-              <div className="sticky-top" style={{ top: "20px" }}>
-                <div className="mb-4">
-                  <h5 className="fw-bold mb-3">Discover more</h5>
-                  <div className="mb-4">
-                    <div className="d-flex flex-wrap gap-2">
-                      <Link to="/tags/ransomware" className="badge bg-light text-dark text-decoration-none p-2">Ransomware</Link>
-                      <Link to="/tags/zero-trust" className="badge bg-light text-dark text-decoration-none p-2">Zero Trust</Link>
-                      <Link to="/tags/encryption" className="badge bg-light text-dark text-decoration-none p-2">Encryption</Link>
-                      <Link to="/tags/owasp-top-10" className="badge bg-light text-dark text-decoration-none p-2">OWASP Top 10</Link>
-                      <Link to="/tags/threat-intel" className="badge bg-light text-dark text-decoration-none p-2">Threat Intel</Link>
-                      <Link to="/tags/security-testing" className="badge bg-light text-dark text-decoration-none p-2">Security Testing</Link>
-                      <Link to="/tags/grc" className="badge bg-light text-dark text-decoration-none p-2">GRC</Link>
-                      <Link to="/tags/social-engineering" className="badge bg-light text-dark text-decoration-none p-2">Social Engineering</Link>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mb-4">
-                  <h5 className="fw-bold mb-3">Top writers</h5>
-                  <div className="d-flex flex-column gap-3">
-                    {loading ? (
-                      <div className="text-center py-2">
-                        <div className="spinner-border spinner-border-sm text-primary" role="status">
-                          <span className="visually-hidden">Loading...</span>
-                        </div>
-                      </div>
-                    ) : topAuthors.length === 0 ? (
-                      <p className="text-muted">No authors available</p>
-                    ) : (
-                      topAuthors.map((author, idx) => (
-                        <Link 
-                          key={idx} 
-                          to={`/author/${author.name}`} 
-                          className="d-flex align-items-center text-decoration-none text-dark transition-all hover-author"
-                        >
-                          <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" 
-                               style={{ width: "32px", height: "32px" }}>
-                            <span className="text-white">{author.name.charAt(0)}</span>
-                          </div>
-                          <div>
-                            <p className="mb-0 fw-medium">{author.name}</p>
-                            <div className="d-flex align-items-center">
-                              <small className="text-muted">{author.role}</small>
-                              <span className="mx-1 text-muted"></span>
-                            </div>
-                          </div>
-                        </Link>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

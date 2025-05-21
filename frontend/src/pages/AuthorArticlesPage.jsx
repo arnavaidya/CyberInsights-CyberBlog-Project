@@ -166,7 +166,7 @@ export default function AuthorArticlesPage() {
                 <a className="nav-link" href="#">Playground</a>
               </li>
                <li className="nav-item">
-                <a className="nav-link" href="#">News</a>
+                <Link className="nav-link" to="/news">News</Link>
               </li>
             </ul>
             <button className="btn btn-light rounded-pill px-4">Get Started</button>
