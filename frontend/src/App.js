@@ -1,13 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './HomePage';
+import HomePage from './pages/HomePage';
 import ArticlesPage from './pages/Articles';
 import ArticleDetail from './pages/ArticleDetail';
 import TagArticlesPage from './pages/TagArticlesPage';
 import AuthorArticlesPage from './pages/AuthorArticlesPage';
 import CyberNewsPage from "./pages/CyberNews";
-
-
-
 
 function App() {
   return (
