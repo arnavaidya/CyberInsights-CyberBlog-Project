@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getFeaturedArticles } from '../api/getArticle.js';
-
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 export default function HomePage() {
-
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,41 +28,14 @@ export default function HomePage() {
 
   return (
     <div className="bg-light">
+      <Header />
+      
       {/* Hero Section with Background Pattern */}
       <div className="position-relative overflow-hidden bg-primary bg-gradient text-white" 
            style={{
              backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"100\" height=\"100\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z\" fill=\"%23ffffff\" fill-opacity=\"0.1\" fill-rule=\"evenodd\"/%3E%3C/svg%3E')",
            }}>
-        {/* Navbar */}
-        <nav className="navbar navbar-expand-lg navbar-dark">
-          <div className="container">
-          <Link className="navbar-brand d-flex align-items-center" to="/">
-            <i className="bi bi-shield-lock fs-3 me-2"></i>
-            <span className="fw-bold">Cyber<span className="fw-light">Insights</span></span>
-          </Link>
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarNav">
-              <ul className="navbar-nav ms-auto me-4">
-                <li className="nav-item">
-                  <a className="nav-link active" href="#">Home</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">About Us</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">Playground</a>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/news">News</Link>
-                </li>
-              </ul>
-              <button className="btn btn-light rounded-pill px-4">Get Started</button>
-            </div>
-          </div>
-        </nav>
-
+        
         {/* Hero Content */}
         <div className="container py-5">
           <div className="row align-items-center py-5">
@@ -71,7 +44,7 @@ export default function HomePage() {
               <p className="lead fs-4 mb-4">Immersive narratives and hands-on simulations that make security concepts stick</p>
               <div className="d-flex gap-3">
                 <Link to="/articles" className="btn btn-light btn-lg rounded-pill px-4">
-                Start reading
+                  Start reading
                 </Link>
               </div>
             </div>
@@ -90,7 +63,7 @@ export default function HomePage() {
                   boxShadow: "0 0 80px rgba(0,0,0,0.15)"
                 }}>
                   {/* Terminal-like container */}
-                  <div className="text-start p-4 h-100 d-flex flex-column" /*style={{backgroundColor: "black"}}*/>
+                  <div className="text-start p-4 h-100 d-flex flex-column">
                     <div className="d-flex gap-2 mb-3">
                       <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#ff5f57" }}></div>
                       <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#febc2e" }}></div>
@@ -120,52 +93,53 @@ export default function HomePage() {
 
       {/* Main Content */}
       <div className="container py-5">
-      {/* Featured Stories Section */}
-      <section className="py-5">
-      <div className="container">
-      <h2 className="text-center fw-bold mb-5">Featured Stories</h2>
-      {loading ? (
-         <div className="text-center">Loading articles...</div>
-         ) : articles.length === 0 ? (
-            <div className="text-center">No articles available.</div>
+        {/* Featured Stories Section */}
+        <section className="py-5">
+          <div className="container">
+            <h2 className="text-center fw-bold mb-5">Featured Stories</h2>
+            {loading ? (
+              <div className="text-center">Loading articles...</div>
+            ) : articles.length === 0 ? (
+              <div className="text-center">No articles available.</div>
             ) : (
-                <div className="row row-cols-1 row-cols-md-3 g-4">
+              <div className="row row-cols-1 row-cols-md-3 g-4">
                 {articles.map(({ fields }) => {
                   const { slug, title, subtitle, authorName, publishedDate, coverImage, tags, readTime } = fields;
                   return (
                     <div key={slug} className="col-lg-4 col-md-6 mb-4">
-                    <div className="card h-100">
-                    {coverImage && coverImage.fields && (
-                    <img
-                      src={`https:${coverImage.fields.file.url}`}
-                      className="card-img-top"
-                      alt={coverImage.fields.title}
-                    />
-                  )}
-                  <div className="card-body d-flex flex-column">
-                  <h5 className="card-title">{title}</h5>
-                  <p className="card-text">{subtitle}</p>
-                  <div>{tags && tags.map((tag, index) => (
-                        <span className= "badge bg-primary mb-2" key={index} style={{ marginRight: '8px' }}>
-                          {tag}
-                        </span>
-                      ))}
-                  </div>
-                  <p className="card-text mt-auto">
-                    <small className="text-muted">
-                      by {authorName} on {new Date(publishedDate).toLocaleDateString()} &middot; {readTime} min read
-                    </small>
-                  </p>
-                  <a href={`/articles/${slug}`} className="btn btn-primary mt-2">Read More</a>
-                </div>
+                      <div className="card h-100">
+                        {coverImage && coverImage.fields && (
+                          <img
+                            src={`https:${coverImage.fields.file.url}`}
+                            className="card-img-top"
+                            alt={coverImage.fields.title}
+                          />
+                        )}
+                        <div className="card-body d-flex flex-column">
+                          <h5 className="card-title">{title}</h5>
+                          <p className="card-text">{subtitle}</p>
+                          <div>
+                            {tags && tags.map((tag, index) => (
+                              <span className="badge bg-primary mb-2" key={index} style={{ marginRight: '8px' }}>
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          <p className="card-text mt-auto">
+                            <small className="text-muted">
+                              by {authorName} on {new Date(publishedDate).toLocaleDateString()} &middot; {readTime} min read
+                            </small>
+                          </p>
+                          <a href={`/articles/${slug}`} className="btn btn-primary mt-2">Read More</a>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
-          );
-        })}
-        </div>
-      )}
-    </div>
-  </section>
+            )}
+          </div>
+        </section>
 
         {/* Interactive Tools Section with Hexagon Shapes */}
         <section className="mb-5 py-4">
@@ -176,9 +150,8 @@ export default function HomePage() {
             </p>
           </div>
           <div className="text-end mb-4">
-            <a href="#" className = "text-primary text-decoration-none">View all</a>
+            <a href="#" className="text-primary text-decoration-none">View all</a>
           </div>
-        
           
           <div className="row g-4 justify-content-center">
             {[
@@ -223,33 +196,8 @@ export default function HomePage() {
         </section>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-dark text-white py-4 mt-5">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-6">
-              <div className="d-flex align-items-center mb-3">
-                <i className="bi bi-shield-lock fs-3 me-2"></i>
-                <span className="fs-4 fw-bold">Cyber<span className="fw-light">Insights</span></span>
-              </div>
-              <p className="text-muted">Learn cybersecurity through immersive stories and hands-on simulations.</p>
-            </div>
-            <div className="col-md-6 text-md-end">
-              <div className="d-flex justify-content-md-end gap-3 mb-3">
-                <a href="#" className="text-white fs-5"><i className="bi bi-twitter"></i></a>
-                <a href="#" className="text-white fs-5"><i className="bi bi-linkedin"></i></a>
-                <a href="#" className="text-white fs-5"><i className="bi bi-github"></i></a>
-                <a href="#" className="text-white fs-5"><i className="bi bi-youtube"></i></a>
-              </div>
-              <p className="text-muted">© 2025 CyberInsights. All rights reserved.</p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
-      {/* Import Bootstrap Icons CSS */}
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
-      
       {/* Custom Styles */}
       <style dangerouslySetInnerHTML={{ __html: `
         .hover-shadow:hover {

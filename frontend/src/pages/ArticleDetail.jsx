@@ -2,6 +2,8 @@ import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import client from '../lib/contentful';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 export default function ArticleDetail() {
   const { slug } = useParams();
@@ -61,24 +63,32 @@ export default function ArticleDetail() {
 
   if (loading) {
     return (
-      <div className="container">
-        <div className="text-center py-5">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
+      <div className="bg-white min-vh-100">
+        <Header />
+        <div className="container">
+          <div className="text-center py-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="mt-3">Loading article...</p>
           </div>
-          <p className="mt-3">Loading article...</p>
         </div>
+        <Footer />
       </div>
     );
   }
 
   if (!article) {
     return (
-      <div className="container text-center py-5">
-        <i className="bi bi-emoji-frown fs-1 text-muted"></i>
-        <h2 className="mt-3">Article not found</h2>
-        <p className="text-muted">The article you're looking for doesn't exist or has been removed.</p>
-        <Link to="/" className="btn btn-primary mt-3">Back to Articles</Link>
+      <div className="bg-white min-vh-100">
+        <Header />
+        <div className="container text-center py-5">
+          <i className="bi bi-emoji-frown fs-1 text-muted"></i>
+          <h2 className="mt-3">Article not found</h2>
+          <p className="text-muted">The article you're looking for doesn't exist or has been removed.</p>
+          <Link to="/" className="btn btn-primary mt-3">Back to Articles</Link>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -107,35 +117,7 @@ export default function ArticleDetail() {
 
   return (
     <div className="bg-white">
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div className="container">
-          <Link className="navbar-brand d-flex align-items-center" to="/">
-            <i className="bi bi-shield-lock fs-3 me-2"></i>
-            <span className="fw-bold">Cyber<span className="fw-light">Insights</span></span>
-          </Link>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto me-4">
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Home</Link>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">About Us</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">Playground</a>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/news">News</Link>
-              </li>
-            </ul>
-            <button className="btn btn-light rounded-pill px-4">Get Started</button>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       <div className="container py-4">
         <div className="row">
@@ -353,32 +335,7 @@ export default function ArticleDetail() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-dark text-white py-4 mt-5">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-6">
-              <div className="d-flex align-items-center mb-3">
-                <i className="bi bi-shield-lock fs-3 me-2"></i>
-                <span className="fs-4 fw-bold">Cyber<span className="fw-light">Insights</span></span>
-              </div>
-              <p className="text-muted">Learn cybersecurity through immersive stories and hands-on simulations.</p>
-            </div>
-            <div className="col-md-6 text-md-end">
-              <div className="d-flex justify-content-md-end gap-3 mb-3">
-                <a href="#" className="text-white fs-5" aria-label="Twitter"><i className="bi bi-twitter"></i></a>
-                <a href="#" className="text-white fs-5" aria-label="LinkedIn"><i className="bi bi-linkedin"></i></a>
-                <a href="#" className="text-white fs-5" aria-label="GitHub"><i className="bi bi-github"></i></a>
-                <a href="#" className="text-white fs-5" aria-label="YouTube"><i className="bi bi-youtube"></i></a>
-              </div>
-              <p className="text-muted">© 2025 CyberInsights. All rights reserved.</p>
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      {/* Import Bootstrap Icons CSS */}
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
+      <Footer />
 
       {/* Custom Styles */}
       <style dangerouslySetInnerHTML={{ __html: `

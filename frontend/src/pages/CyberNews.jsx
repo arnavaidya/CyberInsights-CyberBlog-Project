@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 export default function CyberNewsPage() {
   const [articles, setArticles] = useState([]);
@@ -210,35 +212,8 @@ export default function CyberNewsPage() {
 
   return (
     <div className="bg-white">
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div className="container">
-          <Link className="navbar-brand d-flex align-items-center" to="/">
-            <i className="bi bi-shield-lock fs-3 me-2"></i>
-            <span className="fw-bold">Cyber<span className="fw-light">Insights</span></span>
-          </Link>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto me-4">
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Home</Link>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">About Us</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">Playground</a>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link active" to="/news">News</Link>
-              </li>
-            </ul>
-            <button className="btn btn-light rounded-pill px-4">Get Started</button>
-          </div>
-        </div>
-      </nav>
+      {/* Use the Header component instead of inline navbar */}
+      <Header />
 
       {/* Main Content */}
       <div className="container py-4">
@@ -387,34 +362,10 @@ export default function CyberNewsPage() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-dark text-white py-4 mt-5">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-6">
-              <div className="d-flex align-items-center mb-3">
-                <i className="bi bi-shield-lock fs-3 me-2"></i>
-                <span className="fs-4 fw-bold">Cyber<span className="fw-light">Insights</span></span>
-              </div>
-              <p className="text-muted">Learn cybersecurity through immersive stories and hands-on simulations.</p>
-            </div>
-            <div className="col-md-6 text-md-end">
-              <div className="d-flex justify-content-md-end gap-3 mb-3">
-                <a href="#" className="text-white fs-5" aria-label="Twitter"><i className="bi bi-twitter"></i></a>
-                <a href="#" className="text-white fs-5" aria-label="LinkedIn"><i className="bi bi-linkedin"></i></a>
-                <a href="#" className="text-white fs-5" aria-label="GitHub"><i className="bi bi-github"></i></a>
-                <a href="#" className="text-white fs-5" aria-label="YouTube"><i className="bi bi-youtube"></i></a>
-              </div>
-              <p className="text-muted">© 2025 CyberInsights. All rights reserved.</p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Use the Footer component instead of inline footer */}
+      <Footer />
 
-      {/* Import Bootstrap Icons CSS */}
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
-      
-      {/* Custom Styles */}
+      {/* Custom Styles - Note: Bootstrap Icons CSS is now imported in Header component */}
       <style dangerouslySetInnerHTML={{ __html: `
         .hover-shadow:hover {
           transform: translateY(-5px);

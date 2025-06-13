@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getArticles } from '../api/getArticle';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 export default function AuthorArticlesPage() {
   const { authorName } = useParams();
@@ -144,35 +146,7 @@ export default function AuthorArticlesPage() {
 
   return (
     <div className="bg-white">
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div className="container">
-          <Link className="navbar-brand d-flex align-items-center" to="/">
-            <i className="bi bi-shield-lock fs-3 me-2"></i>
-            <span className="fw-bold">Cyber<span className="fw-light">Insights</span></span>
-          </Link>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto me-4">
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Home</Link>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">About Us</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">Playground</a>
-              </li>
-               <li className="nav-item">
-                <Link className="nav-link" to="/news">News</Link>
-              </li>
-            </ul>
-            <button className="btn btn-light rounded-pill px-4">Get Started</button>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Main Content */}
       <div className="container py-5">
@@ -288,44 +262,44 @@ export default function AuthorArticlesPage() {
               <div className="col-lg-3 d-none d-lg-block">
                 <div className="sticky-top" style={{ top: "20px" }}>
                   <div className="mb-4 page-transition loaded">
-                  <h5 className="fw-bold mb-3">Top writers</h5>
-                  <div className="d-flex flex-column gap-2">
-                    {loading ? (
-                      <div className="text-center py-2">
-                        <div className="spinner-border spinner-border-sm text-primary" role="status">
-                          <span className="visually-hidden">Loading...</span>
+                    <h5 className="fw-bold mb-3">Top writers</h5>
+                    <div className="d-flex flex-column gap-2">
+                      {loading ? (
+                        <div className="text-center py-2">
+                          <div className="spinner-border spinner-border-sm text-primary" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
                         </div>
-                      </div>
-                    ) : topAuthors.length === 0 ? (
-                      <p className="text-muted">No authors available</p>
-                    ) : (
-                      topAuthors.map((author, idx) => (
-                        <Link 
-                          key={idx} 
-                          to={`/author/${author.name}`} 
-                          className={`d-flex align-items-center text-decoration-none ${author.name === authorName ? 'fw-bold' : 'text-dark'} transition-all hover-author`}
-                          style={{ 
-                            transitionDelay: `${idx * 50}ms`,
-                            opacity: pageLoaded ? 1 : 0,
-                            transform: pageLoaded ? 'translateX(0)' : 'translateX(20px)'
-                          }}
-                        >
-                          <div className={`${author.name === authorName ? 'bg-success' : 'bg-primary'} rounded-circle d-flex align-items-center justify-content-center me-2`} 
-                               style={{ width: "32px", height: "32px" }}>
-                            <span className="text-white">{author.name.charAt(0)}</span>
-                          </div>
-                          <div>
-                            <p className="mb-0 fw-medium">{author.name}</p>
-                            <div className="d-flex align-items-center">
-                              <small className="text-muted">{author.role}</small>
-                              <span className="mx-1 text-muted"></span>
+                      ) : topAuthors.length === 0 ? (
+                        <p className="text-muted">No authors available</p>
+                      ) : (
+                        topAuthors.map((author, idx) => (
+                          <Link 
+                            key={idx} 
+                            to={`/author/${author.name}`} 
+                            className={`d-flex align-items-center text-decoration-none ${author.name === authorName ? 'fw-bold' : 'text-dark'} transition-all hover-author`}
+                            style={{ 
+                              transitionDelay: `${idx * 50}ms`,
+                              opacity: pageLoaded ? 1 : 0,
+                              transform: pageLoaded ? 'translateX(0)' : 'translateX(20px)'
+                            }}
+                          >
+                            <div className={`${author.name === authorName ? 'bg-success' : 'bg-primary'} rounded-circle d-flex align-items-center justify-content-center me-2`} 
+                                 style={{ width: "32px", height: "32px" }}>
+                              <span className="text-white">{author.name.charAt(0)}</span>
                             </div>
-                          </div>
-                        </Link>
-                      ))
-                    )}
+                            <div>
+                              <p className="mb-0 fw-medium">{author.name}</p>
+                              <div className="d-flex align-items-center">
+                                <small className="text-muted">{author.role}</small>
+                                <span className="mx-1 text-muted"></span>
+                              </div>
+                            </div>
+                          </Link>
+                        ))
+                      )}
+                    </div>
                   </div>
-                </div>
                   <div className="mb-4">
                     <Link to="/articles" className="btn btn-outline-primary w-100">
                       <i className="bi bi-arrow-left me-2"></i>Back to all articles
@@ -338,32 +312,7 @@ export default function AuthorArticlesPage() {
         )}
       </div>
 
-      {/* Footer */}
-      <footer className="bg-dark text-white py-4 mt-5">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-6">
-              <div className="d-flex align-items-center mb-3">
-                <i className="bi bi-shield-lock fs-3 me-2"></i>
-                <span className="fs-4 fw-bold">Cyber<span className="fw-light">Insights</span></span>
-              </div>
-              <p className="text-muted">Learn cybersecurity through immersive stories and hands-on simulations.</p>
-            </div>
-            <div className="col-md-6 text-md-end">
-              <div className="d-flex justify-content-md-end gap-3 mb-3">
-                <a href="#" className="text-white fs-5" aria-label="Twitter"><i className="bi bi-twitter"></i></a>
-                <a href="#" className="text-white fs-5" aria-label="LinkedIn"><i className="bi bi-linkedin"></i></a>
-                <a href="#" className="text-white fs-5" aria-label="GitHub"><i className="bi bi-github"></i></a>
-                <a href="#" className="text-white fs-5" aria-label="YouTube"><i className="bi bi-youtube"></i></a>
-              </div>
-              <p className="text-muted">© 2025 CyberInsights. All rights reserved.</p>
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      {/* Import Bootstrap Icons CSS */}
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
+      <Footer />
     </div>
   );
 }
