@@ -212,7 +212,6 @@ export default function CyberNewsPage() {
 
   return (
     <div className="bg-white">
-      {/* Use the Header component instead of inline navbar */}
       <Header />
 
       {/* Main Content */}
@@ -362,7 +361,6 @@ export default function CyberNewsPage() {
         </div>
       </div>
 
-      {/* Use the Footer component instead of inline footer */}
       <Footer />
 
       {/* Custom Styles - Note: Bootstrap Icons CSS is now imported in Header component */}
