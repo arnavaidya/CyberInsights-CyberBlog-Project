@@ -5,6 +5,7 @@ import ArticleDetail from './pages/ArticleDetail';
 import TagArticlesPage from './pages/TagArticlesPage';
 import AuthorArticlesPage from './pages/AuthorArticlesPage';
 import CyberNewsPage from "./pages/CyberNews";
+import PlaygroundPage from "./pages/Playgrounds";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/tags/:tagSlug" element={<TagArticlesPage />} />
         <Route path="/author/:authorName" element={<AuthorArticlesPage />} />
         <Route path="/news" element={<CyberNewsPage />} />
+        <Route path="/playground" element={<PlaygroundPage />} />
       </Routes>
     </Router>
   );

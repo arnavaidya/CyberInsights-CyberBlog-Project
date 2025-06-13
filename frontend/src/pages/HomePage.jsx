@@ -150,7 +150,13 @@ export default function HomePage() {
             </p>
           </div>
           <div className="text-end mb-4">
-            <a href="#" className="text-primary text-decoration-none">View all</a>
+            <Link 
+              to="/playground"
+              className="text-primary text-decoration-none"
+              onClick={() => window.scrollTo(0, 0)}
+            >
+              View all
+            </Link>
           </div>
           
           <div className="row g-4 justify-content-center">
