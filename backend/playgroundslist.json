@@ -1,0 +1,47 @@
+[
+  {
+    "id": "caesar-cipher",
+    "name": "Caesar Cipher",
+    "icon": "🔒",
+    "color": "#4f46e5",
+    "category": "encryption",
+    "description": "Encrypt and decrypt messages using this classical cipher",
+    "longDescription": "The Caesar cipher is one of the simplest and most widely known encryption techniques. It is a type of substitution cipher in which each letter in the plaintext is replaced by a letter some fixed number of positions down the alphabet."
+  },
+  {
+    "id": "hash-playground",
+    "name": "Hash Playground",
+    "icon": "#",
+    "color": "#0891b2",
+    "category": "cryptography",
+    "description": "See how hashing algorithms transform your input",
+    "longDescription": "Hash functions are mathematical algorithms that transform input data into fixed-size strings. They are crucial for data integrity, password storage, and digital signatures."
+  },
+  {
+    "id": "sql-injection",
+    "name": "SQL Injection",
+    "icon": "🗄️",
+    "color": "#db2777",
+    "category": "vulnerabilities",
+    "description": "Test SQL injection attacks in a safe environment",
+    "longDescription": "SQL injection is a code injection technique that exploits security vulnerabilities in database-driven applications. Learn how to identify and prevent these attacks."
+  },
+  {
+    "id": "signature-verifier",
+    "name": "Signature Verifier",
+    "icon": "🔑",
+    "color": "#ca8a04",
+    "category": "cryptography",
+    "description": "Verify digital signatures with public key cryptography",
+    "longDescription": "Digital signatures provide authentication, non-repudiation, and data integrity. Learn how public key cryptography enables secure digital communications."
+  },
+  {
+    "id": "xss-demo",
+    "name": "XSS Demo",
+    "icon": "⚡",
+    "color": "#dc2626",
+    "category": "vulnerabilities",
+    "description": "Learn about Cross-Site Scripting attacks safely",
+    "longDescription": "Cross-Site Scripting (XSS) is a security vulnerability that allows attackers to inject malicious scripts into web applications. Practice identification and prevention."
+  }
+]
