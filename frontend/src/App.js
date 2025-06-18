@@ -6,6 +6,8 @@ import TagArticlesPage from './pages/TagArticlesPage';
 import AuthorArticlesPage from './pages/AuthorArticlesPage';
 import CyberNewsPage from "./pages/CyberNews";
 import PlaygroundPage from "./pages/Playgrounds";
+import HashPlayground from "./pages/HashPlayground";
+import CaesarCipherPlayground from "./pages/CaesarCipherPlayground";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/author/:authorName" element={<AuthorArticlesPage />} />
         <Route path="/news" element={<CyberNewsPage />} />
         <Route path="/playground" element={<PlaygroundPage />} />
+        <Route path="/playground/hash-playground" element={<HashPlayground />} />
+        <Route path="/playground/caesar-cipher" element={<CaesarCipherPlayground />} />
       </Routes>
     </Router>
   );

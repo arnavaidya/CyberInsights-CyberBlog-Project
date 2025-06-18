@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -6,6 +7,7 @@ export default function PlaygroundPage() {
   const [tools, setTools] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const fetchTools = async () => {
     try {
@@ -26,6 +28,10 @@ export default function PlaygroundPage() {
   useEffect(() => {
     fetchTools();
   }, []);
+
+  const handlePlaygroundClick = (playgroundId) => {
+    navigate(`/playground/${playgroundId}`);
+  };
 
   return (
     <div className="bg-white min-vh-100 d-flex flex-column">
@@ -63,6 +69,7 @@ export default function PlaygroundPage() {
                   <div 
                     className="card border-0 h-100 shadow-sm hover-shadow transition-all"
                     style={{ cursor: 'pointer' }}
+                    onClick={() => handlePlaygroundClick(tool.id)}
                   >
                     <div className="card-body p-3 text-center">
                       <div 
@@ -78,7 +85,13 @@ export default function PlaygroundPage() {
                       </div>
                       <h3 className="h6 fw-bold mb-2">{tool.name}</h3>
                       <p className="text-muted small mb-3">{tool.description}</p>
-                      <button className="btn btn-sm btn-outline-primary rounded-pill px-3">
+                      <button 
+                        className="btn btn-sm btn-outline-primary rounded-pill px-3"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePlaygroundClick(tool.id);
+                        }}
+                      >
                         Try it
                       </button>
                     </div>
