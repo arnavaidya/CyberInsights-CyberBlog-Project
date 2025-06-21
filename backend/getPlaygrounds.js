@@ -119,6 +119,179 @@ if (!fs.existsSync(toolsFilePath)) {
   writeToolsToFile(getDefaultTools());
 }
 
+// ============ PASSWORD ANALYZER HELPER FUNCTIONS ============
+
+// Password strength analysis
+function analyzePassword(password) {
+    const analysis = {
+        length: password.length,
+        hasLowercase: /[a-z]/.test(password),
+        hasUppercase: /[A-Z]/.test(password),
+        hasNumbers: /\d/.test(password),
+        hasSpecialChars: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+        hasSpaces: /\s/.test(password),
+        entropy: calculateEntropy(password),
+        commonPatterns: checkCommonPatterns(password),
+        estimatedCrackTime: estimateCrackTime(password)
+    };
+    
+    analysis.score = calculatePasswordScore(analysis);
+    analysis.strength = getPasswordStrength(analysis.score);
+    analysis.recommendations = getRecommendations(analysis);
+    
+    return analysis;
+}
+
+function calculateEntropy(password) {
+    const charset = getCharsetSize(password);
+    return password.length * Math.log2(charset);
+}
+
+function getCharsetSize(password) {
+    let charset = 0;
+    if (/[a-z]/.test(password)) charset += 26;
+    if (/[A-Z]/.test(password)) charset += 26;
+    if (/\d/.test(password)) charset += 10;
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) charset += 32;
+    if (/\s/.test(password)) charset += 1;
+    return charset || 1;
+}
+
+function checkCommonPatterns(password) {
+    const patterns = [];
+    
+    // Sequential characters
+    if (/abc|bcd|cde|def|efg/i.test(password)) patterns.push('Sequential letters');
+    if (/123|234|345|456|567|678|789|890/.test(password)) patterns.push('Sequential numbers');
+    
+    // Repeated characters
+    if (/(.)\1{2,}/.test(password)) patterns.push('Repeated characters');
+    
+    // Keyboard patterns
+    if (/qwerty|asdf|zxcv|qaz|wsx|edc/i.test(password)) patterns.push('Keyboard patterns');
+    
+    // Common words (simple check)
+    const commonWords = ['password', 'admin', 'user', 'login', 'welcome', 'secret'];
+    commonWords.forEach(word => {
+        if (password.toLowerCase().includes(word)) {
+            patterns.push(`Common word: ${word}`);
+        }
+    });
+    
+    return patterns;
+}
+
+function estimateCrackTime(password) {
+    const charset = getCharsetSize(password);
+    const combinations = Math.pow(charset, password.length);
+    const guessesPerSecond = 1000000000; // 1 billion guesses per second (modern GPU)
+    const secondsToCrack = combinations / (2 * guessesPerSecond); // Average case
+    
+    if (secondsToCrack < 1) return 'Instantly';
+    if (secondsToCrack < 60) return `${Math.round(secondsToCrack)} seconds`;
+    if (secondsToCrack < 3600) return `${Math.round(secondsToCrack / 60)} minutes`;
+    if (secondsToCrack < 86400) return `${Math.round(secondsToCrack / 3600)} hours`;
+    if (secondsToCrack < 31536000) return `${Math.round(secondsToCrack / 86400)} days`;
+    if (secondsToCrack < 31536000000) return `${Math.round(secondsToCrack / 31536000)} years`;
+    return 'Centuries';
+}
+
+function calculatePasswordScore(analysis) {
+    let score = 0;
+    
+    // Length scoring
+    if (analysis.length >= 8) score += 25;
+    if (analysis.length >= 12) score += 25;
+    if (analysis.length >= 16) score += 25;
+    
+    // Character diversity
+    if (analysis.hasLowercase) score += 5;
+    if (analysis.hasUppercase) score += 5;
+    if (analysis.hasNumbers) score += 5;
+    if (analysis.hasSpecialChars) score += 10;
+    
+    // Entropy bonus
+    if (analysis.entropy > 50) score += 10;
+    if (analysis.entropy > 70) score += 10;
+    
+    // Penalties
+    if (analysis.commonPatterns.length > 0) score -= 20;
+    if (analysis.hasSpaces) score -= 5;
+    
+    return Math.max(0, Math.min(100, score));
+}
+
+function getPasswordStrength(score) {
+    if (score < 25) return 'Very Weak';
+    if (score < 50) return 'Weak';
+    if (score < 75) return 'Fair';
+    if (score < 90) return 'Strong';
+    return 'Very Strong';
+}
+
+function getRecommendations(analysis) {
+    const recommendations = [];
+    
+    if (analysis.length < 8) {
+        recommendations.push('Use at least 8 characters');
+    }
+    if (analysis.length < 12) {
+        recommendations.push('Consider using 12+ characters for better security');
+    }
+    if (!analysis.hasLowercase) {
+        recommendations.push('Add lowercase letters');
+    }
+    if (!analysis.hasUppercase) {
+        recommendations.push('Add uppercase letters');
+    }
+    if (!analysis.hasNumbers) {
+        recommendations.push('Include numbers');
+    }
+    if (!analysis.hasSpecialChars) {
+        recommendations.push('Add special characters (!@#$%^&*)');
+    }
+    if (analysis.commonPatterns.length > 0) {
+        recommendations.push('Avoid common patterns and dictionary words');
+    }
+    if (analysis.hasSpaces) {
+        recommendations.push('Consider removing spaces for compatibility');
+    }
+    
+    if (recommendations.length === 0) {
+        recommendations.push('Excellent! Your password follows security best practices.');
+    }
+    
+    return recommendations;
+}
+
+// Generate secure password
+function generateSecurePassword(options = {}) {
+    const {
+        length = 16,
+        includeLowercase = true,
+        includeUppercase = true,
+        includeNumbers = true,
+        includeSpecialChars = true,
+        excludeSimilar = true
+    } = options;
+    
+    let charset = '';
+    if (includeLowercase) charset += excludeSimilar ? 'abcdefghjkmnpqrstuvwxyz' : 'abcdefghijklmnopqrstuvwxyz';
+    if (includeUppercase) charset += excludeSimilar ? 'ABCDEFGHJKMNPQRSTUVWXYZ' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    if (includeNumbers) charset += excludeSimilar ? '23456789' : '0123456789';
+    if (includeSpecialChars) charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    
+    if (!charset) return '';
+    
+    let password = '';
+    for (let i = 0; i < length; i++) {
+        const randomIndex = crypto.randomInt(0, charset.length);
+        password += charset[randomIndex];
+    }
+    
+    return password;
+}
+
 // ============ MAIN PLAYGROUND ROUTES ============
 
 // API route - reads fresh data from file each time
@@ -140,6 +313,95 @@ app.get('/api/playground/:id', (req, res) => {
   }
   
   res.json(playground);
+});
+
+// ============ PASSWORD ANALYZER PLAYGROUND ROUTES ============
+
+// Analyze password strength
+app.post('/api/playground/password-analyzer/analyze', (req, res) => {
+    try {
+        const { password } = req.body;
+        console.log('🔐 Password analysis request received');
+        
+        if (!password) {
+            console.log('❌ No password provided');
+            return res.status(400).json({ error: 'Password is required' });
+        }
+
+        const analysis = analyzePassword(password);
+        
+        console.log('✅ Password analysis completed:', { 
+            length: analysis.length, 
+            strength: analysis.strength, 
+            score: analysis.score 
+        });
+
+        res.json({
+            analysis,
+            timestamp: new Date().toISOString()
+        });
+    } catch (err) {
+        console.error('❌ Password analysis failed:', err);
+        res.status(500).json({ error: 'Password analysis failed' });
+    }
+});
+
+// Generate secure password
+app.post('/api/playground/password-analyzer/generate', (req, res) => {
+    try {
+        const options = req.body || {};
+        console.log('🔑 Password generation request:', options);
+        
+        const password = generateSecurePassword(options);
+        const analysis = analyzePassword(password);
+        
+        console.log('✅ Secure password generated:', { 
+            length: password.length, 
+            strength: analysis.strength 
+        });
+
+        res.json({
+            password,
+            analysis,
+            timestamp: new Date().toISOString()
+        });
+    } catch (err) {
+        console.error('❌ Password generation failed:', err);
+        res.status(500).json({ error: 'Password generation failed' });
+    }
+});
+
+// Compare passwords
+app.post('/api/playground/password-analyzer/compare', (req, res) => {
+    try {
+        const { passwords } = req.body;
+        console.log('📊 Password comparison request for', passwords?.length || 0, 'passwords');
+        
+        if (!passwords || !Array.isArray(passwords) || passwords.length === 0) {
+            console.log('❌ Invalid passwords array provided');
+            return res.status(400).json({ error: 'Array of passwords is required' });
+        }
+
+        const comparisons = passwords.map((password, index) => ({
+            index: index + 1,
+            password: password,
+            analysis: analyzePassword(password)
+        }));
+        
+        // Sort by score (descending)
+        comparisons.sort((a, b) => b.analysis.score - a.analysis.score);
+        
+        console.log('✅ Password comparison completed');
+
+        res.json({
+            comparisons,
+            bestPassword: comparisons[0],
+            timestamp: new Date().toISOString()
+        });
+    } catch (err) {
+        console.error('❌ Password comparison failed:', err);
+        res.status(500).json({ error: 'Password comparison failed' });
+    }
 });
 
 // ============ HASH PLAYGROUND ROUTES ============

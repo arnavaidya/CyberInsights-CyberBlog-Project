@@ -8,6 +8,7 @@ import CyberNewsPage from "./pages/CyberNews";
 import PlaygroundPage from "./pages/Playgrounds";
 import HashPlayground from "./pages/HashPlayground";
 import CaesarCipherPlayground from "./pages/CaesarCipherPlayground";
+import PasswordAnalyzer from "./pages/PasswrdAnalyzePlayground";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/playground" element={<PlaygroundPage />} />
         <Route path="/playground/hash-playground" element={<HashPlayground />} />
         <Route path="/playground/caesar-cipher" element={<CaesarCipherPlayground />} />
+        <Route path="/playground/password-analyzer" element={<PasswordAnalyzer />} />
       </Routes>
     </Router>
   );
