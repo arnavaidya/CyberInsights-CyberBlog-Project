@@ -7,18 +7,12 @@ import Footer from '../components/Footer';
 // Import individual playground components
 import HashPlayground from './playgrounds/HashPlayground';
 import CaesarCipherPlayground from './playgrounds/CaesarCipherPlayground';
-import SQLInjectionPlayground from './playgrounds/SQLInjectionPlayground';
-import SignatureVerifierPlayground from './playgrounds/SignatureVerifierPlayground';
-import XSSPlayground from './playgrounds/XSSPlayground';
 import PasswordAnalyzerPlayground from './playgrounds/PasswordAnalyzerPlayground';
 
 // Playground component mapping
 const playgroundComponents = {
   'hash-playground': HashPlayground,
   'caesar-cipher': CaesarCipherPlayground,
-  'sql-injection': SQLInjectionPlayground,
-  'signature-verifier': SignatureVerifierPlayground,
-  'xss-demo': XSSPlayground,
   'password-analyzer': PasswordAnalyzerPlayground,
 };
 
