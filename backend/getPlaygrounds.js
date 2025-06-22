@@ -77,6 +77,15 @@ const getDefaultTools = () => [
     longDescription: "Hash functions are mathematical algorithms that transform input data into fixed-size strings. They are crucial for data integrity, password storage, and digital signatures."
   },
   {
+   id: "diffie-hellman",
+   name: "Diffie-Hellman Key Exchange",
+   icon: "🔐",
+   color: "#dc2626",
+   category: "cryptography",
+   description: "Simulate secure key exchange between Alice and Bob",
+   longDescription: "The Diffie-Hellman key exchange is a method for two parties to establish a shared secret key over an insecure channel. This playground demonstrates the mathematical steps involved in the key exchange process."
+  },
+  {
     id: "password-analyzer",
     name: "Password Analyzer",
     icon: "🔐",
@@ -543,6 +552,238 @@ function caesarCipher(text, shift) {
         return char;
     }).join('');
 }
+
+// Add this to your existing backend code (paste.txt)
+
+// ============ DIFFIE-HELLMAN KEY EXCHANGE HELPER FUNCTIONS ============
+
+// Function to check if a number is prime
+function isPrime(n) {
+    if (n < 2) return false;
+    if (n === 2) return true;
+    if (n % 2 === 0) return false;
+    
+    for (let i = 3; i <= Math.sqrt(n); i += 2) {
+        if (n % i === 0) return false;
+    }
+    return true;
+}
+
+// Generate a random prime number within a range
+function generatePrime(min = 100, max = 1000) {
+    let prime;
+    do {
+        prime = Math.floor(Math.random() * (max - min + 1)) + min;
+    } while (!isPrime(prime));
+    return prime;
+}
+
+// Find primitive root (generator) for a prime number
+function findPrimitiveRoot(p) {
+    const phi = p - 1;
+    const factors = [];
+    
+    // Find prime factors of phi
+    let n = phi;
+    for (let i = 2; i * i <= n; i++) {
+        if (n % i === 0) {
+            factors.push(i);
+            while (n % i === 0) {
+                n = Math.floor(n / i);
+            }
+        }
+    }
+    if (n > 1) factors.push(n);
+    
+    // Check each number from 2 to p-1
+    for (let g = 2; g < p; g++) {
+        let isPrimitiveRoot = true;
+        
+        // Check if g^(phi/factor) ≡ 1 (mod p) for any prime factor
+        for (const factor of factors) {
+            if (modPow(g, Math.floor(phi / factor), p) === 1) {
+                isPrimitiveRoot = false;
+                break;
+            }
+        }
+        
+        if (isPrimitiveRoot) {
+            return g;
+        }
+    }
+    return 2; // Fallback
+}
+
+// Modular exponentiation: (base^exp) % mod
+function modPow(base, exp, mod) {
+    let result = 1;
+    base = base % mod;
+    
+    while (exp > 0) {
+        if (exp % 2 === 1) {
+            result = (result * base) % mod;
+        }
+        exp = Math.floor(exp / 2);
+        base = (base * base) % mod;
+    }
+    
+    return result;
+}
+
+// Generate random private key
+function generatePrivateKey(max = 100) {
+    return Math.floor(Math.random() * (max - 2)) + 2;
+}
+
+// ============ DIFFIE-HELLMAN KEY EXCHANGE PLAYGROUND ROUTES ============
+
+// Generate initial parameters (prime and generator)
+app.post('/api/playground/diffie-hellman/generate-params', (req, res) => {
+    try {
+        console.log('🔐 Generating Diffie-Hellman parameters');
+        
+        const prime = generatePrime(100, 500); // Smaller range for demo purposes
+        const generator = findPrimitiveRoot(prime);
+        
+        console.log('✅ DH parameters generated:', { prime, generator });
+        
+        res.json({
+            prime,
+            generator,
+            timestamp: new Date().toISOString(),
+            note: `Prime (p) = ${prime}, Generator (g) = ${generator}`
+        });
+    } catch (err) {
+        console.error('❌ DH parameter generation failed:', err);
+        res.status(500).json({ error: 'Parameter generation failed' });
+    }
+});
+
+// Generate private key for Alice or Bob
+app.post('/api/playground/diffie-hellman/generate-private', (req, res) => {
+    try {
+        const { participant, prime } = req.body;
+        console.log('🔑 Generating private key for:', participant);
+        
+        if (!participant || !prime) {
+            return res.status(400).json({ error: 'Participant and prime are required' });
+        }
+        
+        const privateKey = generatePrivateKey(Math.floor(prime / 2));
+        
+        console.log('✅ Private key generated for', participant, ':', privateKey);
+        
+        res.json({
+            participant,
+            privateKey,
+            timestamp: new Date().toISOString()
+        });
+    } catch (err) {
+        console.error('❌ Private key generation failed:', err);
+        res.status(500).json({ error: 'Private key generation failed' });
+    }
+});
+
+// Calculate public key
+app.post('/api/playground/diffie-hellman/calculate-public', (req, res) => {
+    try {
+        const { participant, prime, generator, privateKey } = req.body;
+        console.log('🔢 Calculating public key for:', participant);
+        
+        if (!participant || !prime || !generator || !privateKey) {
+            return res.status(400).json({ error: 'All parameters are required' });
+        }
+        
+        const publicKey = modPow(generator, privateKey, prime);
+        
+        console.log('✅ Public key calculated for', participant, ':', publicKey);
+        
+        res.json({
+            participant,
+            publicKey,
+            calculation: `${generator}^${privateKey} mod ${prime} = ${publicKey}`,
+            timestamp: new Date().toISOString()
+        });
+    } catch (err) {
+        console.error('❌ Public key calculation failed:', err);
+        res.status(500).json({ error: 'Public key calculation failed' });
+    }
+});
+
+// Calculate shared secret
+app.post('/api/playground/diffie-hellman/calculate-shared', (req, res) => {
+    try {
+        const { participant, prime, otherPublicKey, myPrivateKey } = req.body;
+        console.log('🤝 Calculating shared secret for:', participant);
+        
+        if (!participant || !prime || !otherPublicKey || !myPrivateKey) {
+            return res.status(400).json({ error: 'All parameters are required' });
+        }
+        
+        const sharedSecret = modPow(otherPublicKey, myPrivateKey, prime);
+        
+        console.log('✅ Shared secret calculated for', participant, ':', sharedSecret);
+        
+        res.json({
+            participant,
+            sharedSecret,
+            calculation: `${otherPublicKey}^${myPrivateKey} mod ${prime} = ${sharedSecret}`,
+            timestamp: new Date().toISOString()
+        });
+    } catch (err) {
+        console.error('❌ Shared secret calculation failed:', err);
+        res.status(500).json({ error: 'Shared secret calculation failed' });
+    }
+});
+
+// Complete key exchange simulation
+app.post('/api/playground/diffie-hellman/simulate', (req, res) => {
+    try {
+        console.log('🎭 Running complete DH simulation');
+        
+        // Generate parameters
+        const prime = generatePrime(100, 500);
+        const generator = findPrimitiveRoot(prime);
+        
+        // Generate private keys
+        const alicePrivate = generatePrivateKey(Math.floor(prime / 2));
+        const bobPrivate = generatePrivateKey(Math.floor(prime / 2));
+        
+        // Calculate public keys
+        const alicePublic = modPow(generator, alicePrivate, prime);
+        const bobPublic = modPow(generator, bobPrivate, prime);
+        
+        // Calculate shared secrets
+        const aliceShared = modPow(bobPublic, alicePrivate, prime);
+        const bobShared = modPow(alicePublic, bobPrivate, prime);
+        
+        console.log('✅ Complete DH simulation finished');
+        
+        res.json({
+            parameters: { prime, generator },
+            alice: {
+                privateKey: alicePrivate,
+                publicKey: alicePublic,
+                publicCalculation: `${generator}^${alicePrivate} mod ${prime} = ${alicePublic}`,
+                sharedSecret: aliceShared,
+                sharedCalculation: `${bobPublic}^${alicePrivate} mod ${prime} = ${aliceShared}`
+            },
+            bob: {
+                privateKey: bobPrivate,
+                publicKey: bobPublic,
+                publicCalculation: `${generator}^${bobPrivate} mod ${prime} = ${bobPublic}`,
+                sharedSecret: bobShared,
+                sharedCalculation: `${alicePublic}^${bobPrivate} mod ${prime} = ${bobShared}`
+            },
+            success: aliceShared === bobShared,
+            timestamp: new Date().toISOString()
+        });
+    } catch (err) {
+        console.error('❌ DH simulation failed:', err);
+        res.status(500).json({ error: 'Simulation failed' });
+    }
+});
+
 
 // ============ GENERAL ROUTES ============
 

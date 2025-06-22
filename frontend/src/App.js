@@ -9,6 +9,7 @@ import PlaygroundPage from "./pages/Playgrounds";
 import HashPlayground from "./pages/HashPlayground";
 import CaesarCipherPlayground from "./pages/CaesarCipherPlayground";
 import PasswordAnalyzer from "./pages/PasswrdAnalyzePlayground";
+import DiffieHellmanPlayground from "./pages/DiffHellPlayground";
 
 function App() {
   return (
@@ -24,6 +25,8 @@ function App() {
         <Route path="/playground/hash-playground" element={<HashPlayground />} />
         <Route path="/playground/caesar-cipher" element={<CaesarCipherPlayground />} />
         <Route path="/playground/password-analyzer" element={<PasswordAnalyzer />} />
+        <Route path="/playground/diffie-hellman" element={<DiffieHellmanPlayground />} />
+        
       </Routes>
     </Router>
   );

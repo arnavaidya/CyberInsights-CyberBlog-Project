@@ -18,6 +18,15 @@
     "longDescription": "Hash functions are mathematical algorithms that transform input data into fixed-size strings. They are crucial for data integrity, password storage, and digital signatures."
   },
   {
+   "id": "diffie-hellman",
+   "name": "Diffie-Hellman Key Exchange",
+   "icon": "🔐",
+   "color": "#dc2626",
+   "category": "cryptography",
+   "description": "Simulate secure key exchange between Alice and Bob",
+   "longDescription": "The Diffie-Hellman key exchange is a method for two parties to establish a shared secret key over an insecure channel. This playground demonstrates the mathematical steps involved in the key exchange process."
+  },
+  {
     "id": "password-analyzer",
     "name": "Password Analyzer",
     "icon": "🔐",
