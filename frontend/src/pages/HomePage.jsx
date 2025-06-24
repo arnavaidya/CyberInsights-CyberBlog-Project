@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getFeaturedArticles } from '../api/getArticle.js';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 export default function HomePage() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -25,6 +26,22 @@ export default function HomePage() {
 
     fetchFeatured();
   }, []);
+
+  const handlePlaygroundNavigation = (toolName) => {
+    // Define the mapping between tool names and their respective routes
+    const routeMap = {
+      "Caesar Cipher": "/playground/caesar-cipher",
+      "Hash Playground": "/playground/hash-playground",
+      "Diffie-Hellman Key Exchange": "/playground/diffie-hellman",
+      "Password Analyzer": "/playground/password-analyzer"
+    };
+
+    const route = routeMap[toolName];
+    if (route) {
+      navigate(route);
+      window.scrollTo(0, 0);
+    }
+  };
 
   return (
     <div className="bg-light">
@@ -163,8 +180,8 @@ export default function HomePage() {
             {[
               { name: "Caesar Cipher", icon: "bi-lock", color: "#4f46e5", description: "Encrypt and decrypt messages using this classical cipher" },
               { name: "Hash Playground", icon: "bi-hash", color: "#0891b2", description: "See how hashing algorithms transform your input" },
-              { name: "SQL Injection", icon: "bi-database", color: "#db2777", description: "Test SQL injection attacks in a safe environment" },
-              { name: "Signature Verifier", icon: "bi-key", color: "#ca8a04", description: "Verify digital signatures with public key cryptography" },
+              { name: "Diffie-Hellman Key Exchange", icon: "bi-key", color: "#db2777", description: "Learn how Diffie-Helman Key Exchange works" },
+              { name: "Password Analyzer", icon: "bi-lock", color: "#ca8a04", description: "Are your passwords strong? Check here!" },
             ].map((tool, idx) => (
               <div key={idx} className="col-md-6 col-lg-3">
                 <div className="card border-0 text-center h-100 shadow-sm">
@@ -182,7 +199,12 @@ export default function HomePage() {
                     </div>
                     <h3 className="h5 fw-bold">{tool.name}</h3>
                     <p className="text-muted">{tool.description}</p>
-                    <button className="btn btn-sm btn-outline-primary rounded-pill mt-2">Try it</button>
+                    <button 
+                      className="btn btn-sm btn-outline-primary rounded-pill mt-2"
+                      onClick={() => handlePlaygroundNavigation(tool.name)}
+                    >
+                      Try it
+                    </button>
                   </div>
                 </div>
               </div>
