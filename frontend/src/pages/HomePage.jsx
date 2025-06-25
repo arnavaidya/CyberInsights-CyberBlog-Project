@@ -218,7 +218,7 @@ export default function HomePage() {
             <h2 className="display-6 fw-bold mb-3">Want to share your thoughts?</h2>
             <p className="lead mb-4">Join thousands of authors sharing their ideas with the community</p>
             <button className="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold">
-              Start Writing
+              Join Us
             </button>
           </div>
         </section>

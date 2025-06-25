@@ -37,7 +37,7 @@ export default function Header() {
                 <Link className="nav-link" to="/news">News</Link>
               </li>
             </ul>
-            <button className="btn btn-light rounded-pill px-4">Get Started</button>
+            <button className="btn btn-light rounded-pill px-4">Join Us</button>
           </div>
         </div>
       </nav>
