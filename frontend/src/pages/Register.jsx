@@ -154,7 +154,7 @@ export default function RegistrationPage() {
             <div className="card border-0 shadow-lg">
               <div className="card-body p-5">
                 <div className="text-center mb-4">
-                  <h2 className="fw-bold mb-2">Create Your Account</h2>
+                  <h2 className="fw-bold mb-2">Become a member!</h2>
                   <p className="text-muted">Tell us about yourself to get started</p>
                 </div>
 
