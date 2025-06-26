@@ -37,7 +37,13 @@ export default function Header() {
                 <Link className="nav-link" to="/news">News</Link>
               </li>
             </ul>
-            <button className="btn btn-light rounded-pill px-4">Join Us</button>
+            <Link 
+              to="/register" 
+              className="btn btn-light rounded-pill px-4"
+              onClick={() => window.scrollTo(0, 0)}
+            >
+              Join Us
+            </Link>
           </div>
         </div>
       </nav>

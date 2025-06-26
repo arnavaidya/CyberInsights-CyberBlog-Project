@@ -1,5 +1,8 @@
+// Update the "Join Us" button in your HomePage component
+// Replace the existing button with this Link component
+
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getFeaturedArticles } from '../api/getArticle.js';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -7,9 +10,18 @@ import Footer from '../components/Footer';
 export default function HomePage() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [welcomeMessage, setWelcomeMessage] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
+    // Check for welcome message from registration
+    if (location.state?.message) {
+      setWelcomeMessage(location.state.message);
+      // Clear the message after showing it
+      setTimeout(() => setWelcomeMessage(''), 5000);
+    }
+
     const fetchFeatured = async () => {
       setLoading(true);
       try {
@@ -25,10 +37,9 @@ export default function HomePage() {
     };
 
     fetchFeatured();
-  }, []);
+  }, [location.state]);
 
   const handlePlaygroundNavigation = (toolName) => {
-    // Define the mapping between tool names and their respective routes
     const routeMap = {
       "Caesar Cipher": "/playground/caesar-cipher",
       "Hash Playground": "/playground/hash-playground",
@@ -46,6 +57,25 @@ export default function HomePage() {
   return (
     <div className="bg-light">
       <Header />
+      
+      {/* Welcome Message Alert */}
+      {welcomeMessage && (
+        <div className="alert alert-success alert-dismissible fade show m-0" role="alert">
+          <div className="container">
+            <div className="d-flex align-items-center">
+              <i className="bi bi-check-circle me-2"></i>
+              {welcomeMessage}
+              <button 
+                type="button" 
+                className="btn-close" 
+                data-bs-dismiss="alert" 
+                aria-label="Close"
+                onClick={() => setWelcomeMessage('')}
+              ></button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Hero Section with Background Pattern */}
       <div className="position-relative overflow-hidden bg-primary bg-gradient text-white" 
@@ -212,14 +242,18 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Call to Action */}
+        {/* Call to Action - Updated with Link to Registration */}
         <section className="text-center py-5">
           <div className="p-5 rounded-3 bg-primary text-white">
             <h2 className="display-6 fw-bold mb-3">Want to share your thoughts?</h2>
-            <p className="lead mb-4">Join thousands of authors sharing their ideas with the community</p>
-            <button className="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold">
+            <p className="lead mb-4">Join thousands of professionals sharing their ideas with the community</p>
+            <Link 
+              to="/register" 
+              className="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold text-decoration-none"
+              onClick={() => window.scrollTo(0, 0)}
+            >
               Join Us
-            </button>
+            </Link>
           </div>
         </section>
       </div>
