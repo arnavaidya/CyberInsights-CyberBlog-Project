@@ -252,7 +252,7 @@ export default function HomePage() {
               className="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold text-decoration-none"
               onClick={() => window.scrollTo(0, 0)}
             >
-              Join Us
+              Start Writing
             </Link>
           </div>
         </section>
