@@ -353,8 +353,8 @@ export default function RegistrationPage() {
               },
               {
                 icon: "bi-book",
-                title: "Exclusive Content",
-                description: "Access premium articles and in-depth tutorials"
+                title: "Content Publishing",
+                description: "Publish articles, ideas, experiences with the community"
               },
               {
                 icon: "bi-calendar-event",
