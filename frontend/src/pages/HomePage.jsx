@@ -1,6 +1,3 @@
-// Update the "Join Us" button in your HomePage component
-// Replace the existing button with this Link component
-
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getFeaturedArticles } from '../api/getArticle.js';
