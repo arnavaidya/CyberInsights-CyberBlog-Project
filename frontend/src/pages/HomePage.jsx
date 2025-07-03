@@ -6,10 +6,15 @@ import Footer from '../components/Footer';
 
 export default function HomePage() {
   const [articles, setArticles] = useState([]);
+  const [latestNews, setLatestNews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [newsLoading, setNewsLoading] = useState(true);
   const [welcomeMessage, setWelcomeMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+
+  // API key for news - same as used in CyberNews.jsx
+  const API_KEY = "19bab821f96341e9b321dc26de511ebd";
 
   useEffect(() => {
     // Check for welcome message from registration
@@ -33,7 +38,61 @@ export default function HomePage() {
       }
     };
 
+    const fetchLatestNews = async () => {
+      setNewsLoading(true);
+      try {
+        // Same query as CyberNews.jsx for consistency
+        const query = 'cybersecurity AND (breach OR hack OR vulnerability OR threat OR ransomware OR malware OR phishing)';
+        
+        const res = await fetch(
+          `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&language=en&pageSize=12&apiKey=${API_KEY}`
+        );
+        const data = await res.json();
+        
+        if (data.status === 'ok' && data.articles) {
+          // Filter articles to ensure cybersecurity relevance and remove duplicates
+          const cybersecurityArticles = data.articles.filter((article, index, self) => {
+            const title = (article.title || '').toLowerCase();
+            const description = (article.description || '').toLowerCase();
+            
+            // Remove articles with [Removed] content or null titles
+            if (title.includes('[removed]') || !article.title || !article.description) {
+              return false;
+            }
+            
+            // Keywords that indicate cybersecurity relevance
+            const securityKeywords = [
+              'cyber', 'security', 'hack', 'breach', 'malware', 'ransomware', 
+              'phishing', 'vulnerability', 'exploit', 'threat', 'attack',
+              'cve', 'patch', 'data leak', 'privacy', 'encryption'
+            ];
+            
+            // Check if the article contains at least one cybersecurity keyword
+            const isRelevant = securityKeywords.some(keyword => 
+              title.includes(keyword) || description.includes(keyword)
+            );
+            
+            // Remove duplicates based on title
+            const isDuplicate = self.findIndex(a => a.title === article.title) !== index;
+            
+            return isRelevant && !isDuplicate;
+          });
+          
+          setLatestNews(cybersecurityArticles.slice(0, 4));
+        } else {
+          console.error("News API returned an error:", data.message);
+          setLatestNews([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch latest news:", error);
+        setLatestNews([]);
+      } finally {
+        setNewsLoading(false);
+      }
+    };
+
     fetchFeatured();
+    fetchLatestNews();
   }, [location.state]);
 
   const handlePlaygroundNavigation = (toolName) => {
@@ -48,6 +107,41 @@ export default function HomePage() {
     if (route) {
       navigate(route);
       window.scrollTo(0, 0);
+    }
+  };
+
+  // Format publication date
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  // Get time ago format
+  const getTimeAgo = (dateString) => {
+    const now = new Date();
+    const publishedDate = new Date(dateString);
+    const diffTime = Math.abs(now - publishedDate);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    
+    if (diffDays === 0) {
+      if (diffHours === 0) {
+        return 'Just now';
+      } else if (diffHours === 1) {
+        return '1 hour ago';
+      } else {
+        return `${diffHours} hours ago`;
+      }
+    } else if (diffDays === 1) {
+      return '1 day ago';
+    } else if (diffDays < 7) {
+      return `${diffDays} days ago`;
+    } else {
+      return formatDate(dateString);
     }
   };
 
@@ -187,21 +281,19 @@ export default function HomePage() {
 
         {/* Interactive Tools Section with Hexagon Shapes */}
         <section className="mb-5 py-4">
-          <div className="text-center mb-5">
-            <h2 className="display-6 fw-bold mb-3">Interactive Security Playground</h2>
-            <p className="lead text-muted mx-auto" style={{ maxWidth: "700px" }}>
-              Experiment with cybersecurity concepts in our interactive playground
-            </p>
-          </div>
-          <div className="text-end mb-4">
-            <Link 
-              to="/playground"
-              className="text-primary text-decoration-none"
-              onClick={() => window.scrollTo(0, 0)}
-            >
-              View all
-            </Link>
-          </div>
+           <div className="text-center mb-5">
+    <h2 className="display-6 fw-bold mb-2">Interactive Security Playground</h2>
+    <p className="lead text-muted mx-auto" style={{ maxWidth: "700px" }}>
+      Experiment with cybersecurity concepts in our interactive playground
+    </p>
+    <Link 
+      to="/playground"
+      className="btn btn-outline-primary rounded-pill mt-2"
+      onClick={() => window.scrollTo(0, 0)}
+    >
+      View All Playgrounds
+    </Link>
+  </div>
           
           <div className="row g-4 justify-content-center">
             {[
@@ -239,18 +331,96 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Call to Action - Updated with Link to Registration */}
-        <section className="text-center py-5">
-          <div className="p-5 rounded-3 bg-primary text-white">
-            <h2 className="display-6 fw-bold mb-3">Want to share your thoughts?</h2>
-            <p className="lead mb-4">Join thousands of professionals sharing their ideas with the community</p>
-            <Link 
-              to="/register" 
-              className="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold text-decoration-none"
-              onClick={() => window.scrollTo(0, 0)}
-            >
-              Start Writing
-            </Link>
+        {/* Latest Cybersecurity News Section */}
+        <section className="py-5">
+          <div className="container">
+            <div className="text-center mb-5">
+              <div>
+                <h2 className="display-6 fw-bold mb-2">Latest Cybersecurity News</h2>
+                <p className="lead text-muted">Stay informed with the latest security threats and developments</p>
+              </div>
+              <Link 
+                to="/news"
+                className="btn btn-outline-primary rounded-pill"
+                onClick={() => window.scrollTo(0, 0)}
+              >
+                View All News
+              </Link>
+            </div>
+            
+            {newsLoading ? (
+              <div className="text-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading news...</span>
+                </div>
+                <p className="mt-3 text-muted">Loading latest cybersecurity news...</p>
+              </div>
+            ) : latestNews.length === 0 ? (
+              <div className="text-center py-5">
+                <i className="bi bi-newspaper fs-1 text-muted mb-3"></i>
+                <p className="text-muted">No recent news articles available at the moment.</p>
+              </div>
+            ) : (
+              <div className="row g-4">
+                {latestNews.map((article, idx) => (
+                  <div key={idx} className="col-md-6 col-lg-3">
+                    <div className="card h-100 shadow-sm news-card">
+                      <div className="position-relative">
+                        {article.urlToImage ? (
+                          <img
+                            src={article.urlToImage}
+                            className="card-img-top"
+                            alt={article.title}
+                            style={{ height: "200px", objectFit: "cover" }}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "https://via.placeholder.com/300x200?text=No+Image";
+                            }}
+                          />
+                        ) : (
+                          <div className="bg-light d-flex align-items-center justify-content-center" 
+                               style={{ height: "200px" }}>
+                            <i className="bi bi-newspaper text-muted fs-1"></i>
+                          </div>
+                        )}
+                        
+                        {/* News source badge */}
+                        <div className="position-absolute top-0 start-0 m-2">
+                          <span className="badge bg-primary bg-opacity-90 text-white">
+                            {article.source.name}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="card-body d-flex flex-column">
+                        <h5 className="card-title fw-bold lh-sm mb-3" style={{ fontSize: "1.1rem" }}>
+                          {article.title}
+                        </h5>
+                        <p className="card-text text-muted mb-3 flex-grow-1" style={{ fontSize: "0.9rem" }}>
+                          {article.description && article.description.length > 100 
+                            ? article.description.substring(0, 100) + '...' 
+                            : article.description}
+                        </p>
+                        
+                        <div className="d-flex justify-content-between align-items-center mt-auto">
+                          <small className="text-muted">
+                            {getTimeAgo(article.publishedAt)}
+                          </small>
+                          <a 
+                            href={article.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="btn btn-sm btn-outline-primary rounded-pill"
+                          >
+                            Read More
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </div>
@@ -268,6 +438,13 @@ export default function HomePage() {
         }
         .blinking-cursor {
           animation: blink 1s step-end infinite;
+        }
+        .news-card {
+          transition: all 0.3s ease;
+        }
+        .news-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 30px rgba(0,0,0,0.1);
         }
         @keyframes blink {
           from, to { opacity: 1 }

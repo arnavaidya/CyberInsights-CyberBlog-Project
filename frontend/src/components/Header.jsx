@@ -37,12 +37,13 @@ export default function Header() {
                 <Link className="nav-link" to="/news">News</Link>
               </li>
             </ul>
-            <Link 
-              to="/register" 
+            <Link
+              to="/articles"
               className="btn btn-light rounded-pill px-4"
               onClick={() => window.scrollTo(0, 0)}
-            >
-              Join Us
+              >
+              <i className="bi bi-book me-2"></i>
+              Explore
             </Link>
           </div>
         </div>
