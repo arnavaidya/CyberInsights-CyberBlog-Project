@@ -26,7 +26,7 @@ export default function PlaygroundWrapper() {
   useEffect(() => {
     const fetchPlayground = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/playground/${id}`);
+        const response = await fetch(`https://cyberinsights.onrender.com/api/playground/${id}`);  {/*http://localhost:5000/api/playground/${id}*/}
         if (!response.ok) {
           throw new Error('Playground not found');
         }
