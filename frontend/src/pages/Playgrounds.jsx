@@ -11,7 +11,7 @@ export default function PlaygroundPage() {
 
   const fetchTools = async () => {
     try {
-      const res = await fetch('https://cyberinsights.onrender.com/api/tools'); {/* http://localhost:5000/api/tools */}
+      const res = await fetch('http://localhost:5000/api/tools'); {/* http://localhost:5000/api/tools */}
       if (!res.ok) {
         throw new Error(`Error ${res.status}: ${res.statusText}`);
       }
